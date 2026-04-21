@@ -1951,6 +1951,25 @@ ul.plain li{margin:4px 0}
 
     <div class="term">
       <div class="term-name">
+        LLM
+        <span class="en">Large Language Model</span>
+      </div>
+      <div class="term-body">
+        <p><strong>인간의 뇌에 해당</strong>합니다. 방대한 언어 데이터를 학습해 <strong>말을 이해하고 생성하는 모델 그 자체</strong>를 가리킵니다.</p>
+        <p>여기에 <strong>움직이는 손발(도구·MCP·Skills)을 붙이면 비로소 "에이전트"</strong>가 됩니다. 바꿔 말하면 <strong>에이전트는 하나의 프레임워크</strong>이고, 그 안의 <strong>머리(LLM)는 언제든 갈아끼울 수 있습니다.</strong> 오늘은 Claude Sonnet으로, 내일은 Claude Opus로, 경우에 따라서는 다른 회사 모델(GPT·Gemini 등)로 교체해도 에이전트 구조 자체는 그대로 유지됩니다.</p>
+        <p>모델은 <strong>크기(파라미터 수)</strong>에 따라 대체로 세 등급으로 구분됩니다.</p>
+        <ul class="plain">
+          <li><strong>SLM <span class="en" style="display:inline;margin-left:2px">Small Language Model</span></strong> — <em>"경량 모델"</em>. 파라미터 수십억(B) 수준으로 작아, <strong>노트북·스마트폰에서 바로 구동</strong>할 수 있을 만큼 가볍습니다. <strong>속도·비용·프라이버시(로컬 실행)</strong>가 장점이고, 대신 복잡한 추론은 약합니다. (예: Microsoft Phi, Google Gemma 소형판)</li>
+          <li><strong>MLM <span class="en" style="display:inline;margin-left:2px">Medium Language Model</span></strong> — <em>"중형 모델"</em>. SLM과 LLM의 중간 체급으로, <strong>속도와 품질의 균형</strong>이 필요한 실무 자동화에 자주 쓰입니다. (예: Claude Haiku · Sonnet 급 일상 업무 모델)
+          <br/><span style="opacity:.7;font-size:.95em">※ 참고. 학계에서는 MLM이 <em>Masked Language Model</em>(BERT가 사용한 학습 방식)을 뜻하기도 합니다. 문맥에 따라 구분하시면 됩니다.</span></li>
+          <li><strong>LLM <span class="en" style="display:inline;margin-left:2px">Large Language Model</span></strong> — <em>"대형 모델"</em>. 수천억(B)~조(T) 단위 파라미터를 가진 <strong>최상위 체급</strong>. 복잡한 전략 수립, 깊이 있는 추론, 장시간 자율 실행이 필요할 때 사용합니다. (예: Claude Opus, GPT 최상위, Gemini Ultra)</li>
+        </ul>
+        <p><strong>핵심.</strong> 에이전트의 성능은 <strong>"두뇌(모델) × 손발(도구)"</strong>의 곱으로 결정됩니다. 업무 난이도에 따라 <strong>더 작은 모델로 내리거나(비용 절감) 더 큰 모델로 올리는(품질 향상) 판단</strong>이 바로 숙련도의 차이입니다. Claude Code에서 <code>/model</code> 명령 한 줄로 두뇌를 바로 교체할 수 있다는 점을 기억해 두세요.</p>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">
         에이전트
         <span class="en">Agent</span>
       </div>
