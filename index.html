@@ -1996,6 +1996,51 @@ ul.plain li{margin:4px 0}
 
     <div class="term">
       <div class="term-name">
+        API
+        <span class="en">Application Programming Interface</span>
+      </div>
+      <div class="term-body">
+        <p><strong>프로그램과 프로그램이 서로 대화하기 위해 미리 약속해 둔 "창구"</strong>입니다. 사람으로 치면 <strong>"정해진 양식의 주문서"</strong>에 해당합니다.</p>
+        <p>비유하자면 레스토랑의 주문 과정과 같습니다. 손님(프로그램 A)은 주방(프로그램 B)에 직접 들어가지 않고, <strong>메뉴판에 적힌 이름과 양식대로</strong> 종업원에게 주문합니다. 주방은 그 양식에 맞춰 요리를 내놓습니다. 이때 <strong>메뉴판과 주문 양식 전체</strong>가 바로 API입니다.</p>
+        <p>일상에서 우리가 쓰는 거의 모든 디지털 서비스가 API로 엮여 있습니다.</p>
+        <ul class="plain">
+          <li><strong>날씨 앱</strong> — 기상청 API에 "오늘 서울 날씨"를 요청해 결과를 받아와 화면에 보여 줍니다.</li>
+          <li><strong>카카오 로그인</strong> — 쇼핑몰 앱이 카카오 로그인 API를 호출해 사용자 신원을 확인합니다.</li>
+          <li><strong>ChatGPT · Claude API</strong> — 회사 내부 시스템이 Anthropic의 Claude API를 호출해 문서 요약 결과를 받아옵니다.</li>
+        </ul>
+        <p>본 교육에서도 Claude Code가 여러 서비스(브라우저·메일·캘린더 등)와 일하기 위해 <strong>각 서비스의 API를 호출</strong>합니다. 다만 API마다 규격이 제각각이다 보니, 이를 <strong>공통 규격으로 묶어 준 것이 바로 다음에 나올 MCP</strong>입니다.</p>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">
+        API 키
+        <span class="en">API Key</span>
+      </div>
+      <div class="term-body">
+        <p>API를 호출할 때 <strong>"당신이 누구인지, 어떤 권한으로 쓰는지"를 증명하는 비밀번호 같은 문자열</strong>입니다. 사람으로 치면 <strong>헬스장 회원 카드 또는 사무실 출입증</strong>에 해당합니다.</p>
+        <p>API를 제공하는 쪽은 API 키로 다음 세 가지를 합니다.</p>
+        <ul class="plain">
+          <li><strong>신원 확인</strong> — "이 요청이 정말 등록된 사용자에게서 온 것인가?"</li>
+          <li><strong>권한 관리</strong> — "이 키는 읽기만 되는가, 쓰기까지 되는가?"</li>
+          <li><strong>사용량 집계·과금</strong> — "이번 달 이 키로 몇 번 호출했는가? 요금은 얼마인가?"</li>
+        </ul>
+        <p>형태는 보통 <code>sk-ant-api03-xxxxxxxx...</code>처럼 <strong>길고 무작위한 문자열</strong>입니다. 겉보기엔 평범해 보여도, <strong>이 한 줄이 곧 돈·데이터·권한</strong>이라고 생각하시면 됩니다.</p>
+        <div class="callout warn" style="margin:12px 0">
+          <span class="callout-title">⚠️ 취급 시 꼭 지켜야 할 원칙.</span>
+          <ul class="plain" style="margin-top:6px">
+            <li><strong>절대 타인에게 공유하지 마세요.</strong> 키가 유출되면 타인이 내 계정으로 API를 호출해 요금이 청구되거나, 내가 쌓아 둔 데이터를 가져갈 수 있습니다.</li>
+            <li><strong>화면 공유·스크린샷·채팅창에 붙여 넣지 마세요.</strong> 교육 실습 중 특히 주의가 필요합니다.</li>
+            <li><strong>GitHub 등 공개된 저장소에 올리지 마세요.</strong> 봇이 1분 내로 긁어가 도용합니다. 실수로 올렸다면 즉시 <strong>"키 폐기(Revoke)"</strong> 후 새로 발급해야 합니다.</li>
+            <li><strong>의심되면 바로 폐기.</strong> 대부분의 서비스는 관리 화면에서 버튼 한 번으로 기존 키를 무효화하고 새 키를 발급받을 수 있습니다.</li>
+          </ul>
+        </div>
+        <p>본 교육에서는 Claude Code를 <strong>구독 로그인 방식</strong>으로 사용하므로 직접 API 키를 다루지는 않습니다. 다만 향후 회사 시스템에 Claude를 직접 연동하거나 다른 AI 서비스의 API를 쓰게 될 때, 이 용어가 반드시 등장하므로 개념만 익혀 두시면 됩니다.</p>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">
         MCP
         <span class="en">Model Context Protocol</span>
       </div>
