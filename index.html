@@ -1,0 +1,2443 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Claude Code 워크스페이스 실습 — 사전 설치 교안</title>
+<meta name="description" content="교육 전 자가 설치용 교안. macOS / Windows 단계별 안내와 핵심 용어집." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ───────────────────────── Tokens ───────────────────────── */
+:root{
+  --paper:#f4efe6;
+  --paper-deep:#ebe4d4;
+  --ink:#1c1d24;
+  --ink-soft:#3c3e4a;
+  --ink-faint:#6a6b76;
+  --rule:#c9bfa9;
+  --rule-soft:#dcd3bf;
+  --accent:#a63a25;         /* terracotta */
+  --accent-deep:#7d2a18;
+  --accent-soft:#f1dfd8;
+  --mark:#f2cf66;            /* ochre highlight */
+  --ok:#2d6a4f;
+  --warn:#b7791f;
+  --code-bg:#1f1d28;
+  --code-ink:#f0ead6;
+  --code-comment:#8a8670;
+  --code-keyword:#f1b071;
+  --code-string:#b5cf9b;
+  --shadow: 0 1px 0 rgba(0,0,0,0.04), 0 8px 28px -18px rgba(60,40,10,0.3);
+  --serif: "Noto Serif KR", "Noto Serif", Georgia, serif;
+  --sans: "Noto Sans KR", "Helvetica Neue", Arial, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* ───────────────────────── Base ───────────────────────── */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:84px}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--serif);
+  font-size:16.5px;
+  line-height:1.75;
+  letter-spacing:.003em;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+/* subtle paper grain via layered gradients (no external asset) */
+body::before{
+  content:"";
+  position:fixed; inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(166,58,37,.05), transparent 60%),
+    radial-gradient(900px 500px at 110% 110%, rgba(31,29,40,.05), transparent 60%);
+  z-index:0;
+}
+
+/* ───────────────────────── Top bar ───────────────────────── */
+.topbar{
+  position:sticky; top:0; z-index:50;
+  backdrop-filter:saturate(140%) blur(8px);
+  background:rgba(244,239,230,0.85);
+  border-bottom:1px solid var(--rule-soft);
+}
+.topbar-inner{
+  max-width:1040px; margin:0 auto;
+  padding:10px 24px;
+  display:flex; align-items:center; gap:20px;
+  font-family:var(--sans);
+  font-size:13px;
+}
+.topbar-title{
+  font-weight:700; letter-spacing:.02em;
+  flex:0 0 auto;
+  color:var(--ink);
+}
+.topbar-nav{
+  display:flex; gap:16px; flex:1 1 auto; overflow-x:auto;
+}
+.topbar-nav a{
+  color:var(--ink-soft);
+  text-decoration:none;
+  white-space:nowrap;
+  padding:4px 2px;
+  border-bottom:1px solid transparent;
+  transition:border-color .15s;
+}
+.topbar-nav a:hover{border-bottom-color:var(--accent)}
+.progress-chip{
+  font-family:var(--mono);
+  font-size:12px;
+  padding:5px 10px;
+  border:1px solid var(--rule);
+  border-radius:999px;
+  background:#fff;
+  color:var(--ink-soft);
+  flex:0 0 auto;
+}
+.progress-chip b{color:var(--accent); font-weight:700}
+
+/* ───────────────────────── Layout ───────────────────────── */
+main{
+  position:relative; z-index:1;
+  max-width:820px; margin:0 auto;
+  padding:56px 24px 120px;
+}
+
+/* ───────────────────────── Instructor credit ───────────────────────── */
+.instructor-credit{
+  display:flex;
+  align-items:center;
+  gap:18px;
+  margin:0 0 48px;
+  padding:14px 2px;
+  border-top:1px solid var(--rule);
+  border-bottom:1px solid var(--rule);
+  font-family:var(--sans);
+  font-size:13px;
+  line-height:1.5;
+  flex-wrap:wrap;
+}
+.instructor-credit .ic-label{
+  font-size:10.5px;
+  font-weight:700;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  color:var(--accent);
+  padding-right:16px;
+  border-right:1px solid var(--rule);
+  align-self:stretch;
+  display:flex;
+  align-items:center;
+}
+.instructor-credit .ic-name{
+  color:var(--ink-soft);
+  display:flex;
+  align-items:baseline;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.instructor-credit .ic-name .ic-role{
+  font-size:12.5px;
+  color:var(--ink-faint);
+  letter-spacing:.01em;
+}
+.instructor-credit .ic-name .ic-person{
+  font-family:var(--serif);
+  font-size:17px;
+  font-weight:700;
+  color:var(--ink);
+  letter-spacing:-.005em;
+}
+.instructor-credit .ic-link{
+  margin-left:auto;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-family:var(--mono);
+  font-size:12.5px;
+  color:var(--accent-deep);
+  text-decoration:none;
+  letter-spacing:.01em;
+  border-bottom:1px solid var(--rule);
+  padding:2px 0;
+  transition:all .15s;
+}
+.instructor-credit .ic-link:hover{
+  color:var(--accent);
+  border-bottom-color:var(--accent);
+}
+.instructor-credit .ic-link .arrow{
+  font-family:var(--sans);
+  font-size:13px;
+  line-height:1;
+  transition:transform .15s;
+}
+.instructor-credit .ic-link:hover .arrow{
+  transform:translate(2px,-2px);
+}
+@media (max-width:620px){
+  .instructor-credit{flex-direction:column; align-items:flex-start; gap:8px; padding:16px 0}
+  .instructor-credit .ic-label{border:none; padding:0; align-self:flex-start}
+  .instructor-credit .ic-link{margin-left:0}
+}
+
+/* ───────────────────────── Cover ───────────────────────── */
+.cover{
+  margin:0 0 64px;
+  padding:40px 0 44px;
+  border-top:3px double var(--ink);
+  border-bottom:3px double var(--ink);
+  text-align:center;
+}
+.cover-eyebrow{
+  font-family:var(--sans);
+  font-size:12px;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:18px;
+}
+.cover h1{
+  font-family:var(--serif);
+  font-weight:700;
+  font-size:clamp(30px, 5vw, 44px);
+  line-height:1.25;
+  margin:0 0 16px;
+  letter-spacing:-.01em;
+}
+.cover h1 em{
+  font-style:normal;
+  background:linear-gradient(to top, var(--mark) 32%, transparent 32%);
+  padding:0 4px;
+}
+.cover-sub{
+  font-family:var(--sans);
+  font-size:14.5px;
+  color:var(--ink-soft);
+  max-width:560px;
+  margin:0 auto 24px;
+  line-height:1.75;
+}
+.cover-meta{
+  display:flex; justify-content:center; gap:22px; flex-wrap:wrap;
+  font-family:var(--sans); font-size:12.5px;
+  color:var(--ink-faint);
+}
+.cover-meta span{display:inline-flex; align-items:center; gap:6px}
+.cover-meta b{color:var(--ink); font-weight:500}
+
+/* ───────────────────────── OS switch (global) ───────────────────────── */
+.os-switch{
+  position:sticky; top:50px; z-index:40;
+  margin:-20px 0 40px;
+  padding:14px 16px;
+  background:var(--paper-deep);
+  border:1px solid var(--rule);
+  border-radius:4px;
+  display:flex; align-items:center; gap:14px;
+  font-family:var(--sans);
+  font-size:13px;
+  box-shadow:var(--shadow);
+}
+.os-switch-label{
+  color:var(--ink-soft);
+  letter-spacing:.02em;
+}
+.os-switch-label b{color:var(--ink); font-weight:700}
+.os-tabs{display:inline-flex; gap:4px; margin-left:auto}
+.os-tab{
+  appearance:none; border:1px solid var(--rule);
+  background:#fff; color:var(--ink-soft);
+  font-family:var(--sans); font-weight:500;
+  font-size:13px;
+  padding:7px 14px;
+  cursor:pointer;
+  border-radius:3px;
+  transition:all .15s;
+  letter-spacing:.01em;
+}
+.os-tab:hover{border-color:var(--accent-deep); color:var(--accent-deep)}
+.os-tab[aria-selected="true"]{
+  background:var(--ink); color:var(--paper);
+  border-color:var(--ink);
+}
+
+/* Show/hide blocks by OS */
+[data-os="mac"],[data-os="win"]{display:none}
+body[data-active-os="mac"] [data-os="mac"]{display:block}
+body[data-active-os="win"] [data-os="win"]{display:block}
+
+/* ───────────────────────── Section structure ───────────────────────── */
+section{margin:0 0 72px; scroll-margin-top:100px}
+.part-label{
+  font-family:var(--sans);
+  font-size:11.5px;
+  letter-spacing:.32em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin:0 0 10px;
+}
+h2{
+  font-family:var(--serif);
+  font-size:30px;
+  font-weight:700;
+  line-height:1.3;
+  margin:0 0 8px;
+  letter-spacing:-.005em;
+}
+h2 .num{
+  font-family:var(--mono);
+  font-size:18px;
+  color:var(--ink-faint);
+  font-weight:400;
+  margin-right:10px;
+  vertical-align:2px;
+}
+.lede{
+  font-family:var(--sans);
+  font-size:14.5px;
+  color:var(--ink-soft);
+  line-height:1.75;
+  margin:0 0 28px;
+  padding-bottom:24px;
+  border-bottom:1px solid var(--rule-soft);
+}
+h3{
+  font-family:var(--serif);
+  font-size:21px;
+  font-weight:700;
+  margin:40px 0 12px;
+  padding-bottom:6px;
+  border-bottom:1px dotted var(--rule);
+}
+h4{
+  font-family:var(--sans);
+  font-size:14px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  color:var(--ink-soft);
+  margin:28px 0 10px;
+}
+p{margin:0 0 16px}
+strong{font-weight:700}
+a{color:var(--accent-deep); text-decoration:underline; text-underline-offset:3px; text-decoration-thickness:1px}
+a:hover{color:var(--accent)}
+
+/* ───────────────────────── Step card ───────────────────────── */
+.step{
+  margin:18px 0;
+  padding:20px 22px 18px;
+  background:#fff;
+  border:1px solid var(--rule-soft);
+  border-left:3px solid var(--accent);
+  border-radius:3px;
+  box-shadow:var(--shadow);
+  position:relative;
+}
+.step-head{
+  display:flex; align-items:flex-start; gap:12px;
+  margin-bottom:12px;
+}
+.step-check{
+  flex:0 0 auto;
+  width:22px; height:22px;
+  margin-top:3px;
+  appearance:none;
+  border:1.5px solid var(--ink-soft);
+  border-radius:3px;
+  cursor:pointer;
+  background:#fff;
+  position:relative;
+}
+.step-check:checked{
+  background:var(--ok);
+  border-color:var(--ok);
+}
+.step-check:checked::after{
+  content:"✓";
+  position:absolute;
+  inset:0;
+  color:#fff;
+  font-family:var(--sans);
+  font-weight:700;
+  font-size:15px;
+  display:flex; align-items:center; justify-content:center;
+  line-height:1;
+}
+.step-title{
+  flex:1;
+  font-family:var(--serif);
+  font-size:18px;
+  font-weight:700;
+  line-height:1.4;
+  margin:0;
+}
+.step-title .tag{
+  font-family:var(--sans);
+  font-size:10.5px;
+  font-weight:700;
+  letter-spacing:.12em;
+  padding:2px 7px;
+  margin-left:8px;
+  border-radius:2px;
+  vertical-align:2px;
+  text-transform:uppercase;
+}
+.tag-mac{background:#dfe7f0; color:#1e3a5f}
+.tag-win{background:#e8e0f0; color:#4a2e70}
+.tag-both{background:#e0e8d8; color:#33502a}
+.step-body{font-size:15.5px; line-height:1.8}
+.step-body p:last-child{margin-bottom:0}
+
+/* ───────────────────────── Code block ───────────────────────── */
+.code{
+  position:relative;
+  background:var(--code-bg);
+  color:var(--code-ink);
+  font-family:var(--mono);
+  font-size:13.5px;
+  line-height:1.7;
+  padding:16px 56px 16px 18px;
+  border-radius:4px;
+  overflow-x:auto;
+  margin:14px 0;
+  letter-spacing:.005em;
+}
+.code .shell{color:var(--code-comment); user-select:none}
+.code .cmd-line{display:block}
+.code-copy{
+  position:absolute; top:8px; right:8px;
+  appearance:none; border:1px solid rgba(240,234,214,.25);
+  background:rgba(240,234,214,.08);
+  color:var(--code-ink);
+  font-family:var(--sans); font-size:11px; font-weight:500;
+  letter-spacing:.12em; text-transform:uppercase;
+  padding:5px 9px; border-radius:3px;
+  cursor:pointer;
+  transition:all .15s;
+}
+.code-copy:hover{background:rgba(240,234,214,.2)}
+.code-copy.copied{background:var(--ok); color:#fff; border-color:var(--ok)}
+
+/* Inline code */
+code:not(.code){
+  font-family:var(--mono);
+  font-size:.88em;
+  padding:1px 6px;
+  background:var(--paper-deep);
+  border:1px solid var(--rule-soft);
+  border-radius:3px;
+  color:var(--accent-deep);
+}
+
+/* ───────────────────────── Callouts ───────────────────────── */
+.callout{
+  margin:16px 0;
+  padding:14px 18px;
+  border-radius:3px;
+  font-family:var(--sans);
+  font-size:14px;
+  line-height:1.7;
+  border-left:3px solid;
+}
+.callout-title{
+  font-weight:700;
+  margin-right:8px;
+  letter-spacing:.02em;
+}
+.callout.tip{background:#fbf4e3; border-color:var(--mark); color:#4a3b12}
+.callout.warn{background:#fbeae6; border-color:var(--accent); color:#5a1a10}
+.callout.info{background:#eaf0ec; border-color:var(--ok); color:#1e3f30}
+.callout.note{background:#efe9dc; border-color:var(--ink-faint); color:var(--ink)}
+
+/* ───────────────────────── Table ───────────────────────── */
+.tbl{
+  width:100%;
+  border-collapse:collapse;
+  margin:18px 0;
+  font-family:var(--sans);
+  font-size:14px;
+}
+.tbl th, .tbl td{
+  padding:12px 14px;
+  border-bottom:1px solid var(--rule-soft);
+  text-align:left;
+  vertical-align:top;
+  line-height:1.65;
+}
+.tbl th{
+  background:var(--paper-deep);
+  font-weight:700;
+  letter-spacing:.02em;
+  border-bottom:2px solid var(--ink);
+  font-size:12.5px;
+  text-transform:uppercase;
+}
+.tbl tr:last-child td{border-bottom:none}
+
+/* ───────────────────────── Glossary ───────────────────────── */
+.glossary{
+  display:grid;
+  gap:4px;
+  margin:24px 0;
+}
+.term{
+  padding:22px 0;
+  border-top:1px solid var(--rule-soft);
+  display:grid;
+  grid-template-columns: 180px 1fr;
+  gap:32px;
+}
+.term:first-child{border-top:2px solid var(--ink)}
+.term:last-child{border-bottom:2px solid var(--ink)}
+.term-name{
+  font-family:var(--sans);
+  font-weight:900;
+  font-size:15px;
+  letter-spacing:.01em;
+  color:var(--accent-deep);
+  line-height:1.5;
+}
+.term-name .en{
+  display:block;
+  font-family:var(--mono);
+  font-weight:500;
+  font-size:11.5px;
+  color:var(--ink-faint);
+  margin-top:4px;
+  letter-spacing:.02em;
+  text-transform:lowercase;
+}
+.term-body{font-size:15px; line-height:1.8}
+.term-body p:first-child{margin-top:0}
+.term-body p:last-child{margin-bottom:0}
+@media (max-width:720px){
+  .term{grid-template-columns:1fr; gap:8px}
+}
+
+/* ───────────────────────── Final checklist ───────────────────────── */
+.final-check{
+  margin:32px 0;
+  padding:24px 28px;
+  background:#fff;
+  border:2px solid var(--ink);
+  border-radius:4px;
+}
+.final-check h3{border:none; margin-top:0}
+.final-check ul{list-style:none; padding:0; margin:0}
+.final-check li{
+  padding:10px 0;
+  border-bottom:1px dotted var(--rule);
+  display:flex; align-items:flex-start; gap:12px;
+  font-family:var(--sans); font-size:14.5px; line-height:1.65;
+}
+.final-check li:last-child{border-bottom:none}
+.final-check input{
+  width:18px; height:18px; margin-top:3px; flex:0 0 auto;
+  accent-color:var(--ok);
+}
+.final-check code{font-size:.9em}
+
+/* ───────────────────────── TOC ───────────────────────── */
+.toc{
+  margin:28px 0 40px;
+  padding:24px 28px;
+  background:var(--paper-deep);
+  border:1px solid var(--rule);
+  border-radius:4px;
+}
+.toc h4{margin-top:0}
+.toc ol{
+  list-style:none; counter-reset:toc; padding:0; margin:0;
+  font-family:var(--sans); font-size:14px; line-height:2;
+}
+.toc li{counter-increment:toc; display:flex; gap:14px}
+.toc li::before{
+  content:counter(toc, decimal-leading-zero);
+  font-family:var(--mono); font-size:12px;
+  color:var(--accent);
+  flex:0 0 auto;
+}
+.toc a{color:var(--ink); text-decoration:none; border-bottom:1px solid transparent}
+.toc a:hover{border-bottom-color:var(--accent)}
+
+/* ───────────────────────── Model table ───────────────────────── */
+.model-grid{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:14px;
+  margin:20px 0;
+}
+.model-card{
+  padding:20px;
+  border:1px solid var(--rule);
+  background:#fff;
+  border-radius:4px;
+  font-family:var(--sans);
+  font-size:13.5px;
+  line-height:1.7;
+}
+.model-card .name{
+  font-family:var(--serif);
+  font-size:18px;
+  font-weight:700;
+  margin:0 0 4px;
+}
+.model-card .tier{
+  font-family:var(--mono);
+  font-size:10.5px;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:12px;
+}
+.model-card .use{
+  color:var(--ink-soft);
+  margin-top:10px;
+  font-size:13px;
+  border-top:1px dotted var(--rule);
+  padding-top:10px;
+}
+@media (max-width:720px){.model-grid{grid-template-columns:1fr}}
+
+/* ───────────────────────── Footer ───────────────────────── */
+footer{
+  max-width:820px; margin:60px auto 40px;
+  padding:28px 24px 0;
+  border-top:1px solid var(--rule-soft);
+  font-family:var(--sans);
+  font-size:12.5px;
+  color:var(--ink-faint);
+  line-height:1.7;
+  text-align:center;
+}
+
+/* ───────────────────────── Utility ───────────────────────── */
+.kbd{
+  display:inline-block;
+  font-family:var(--mono); font-size:12px;
+  padding:1px 7px;
+  background:#fff;
+  border:1px solid var(--rule);
+  border-bottom-width:2px;
+  border-radius:3px;
+  color:var(--ink);
+  line-height:1.5;
+  vertical-align:1px;
+}
+
+ul.plain{padding-left:20px; margin:12px 0}
+ul.plain li{margin:4px 0}
+
+/* ───────────────────────── Organizer section ───────────────────────── */
+.organizer{
+  margin:0 0 60px;
+  padding:36px 36px 32px;
+  background:
+    linear-gradient(180deg, rgba(28,29,36,0.04), transparent 140px),
+    var(--paper-deep);
+  border:1px solid var(--rule);
+  border-top:4px solid var(--ink);
+  border-radius:3px;
+  position:relative;
+}
+.organizer::before{
+  content:"FOR ORGANIZERS";
+  position:absolute;
+  top:-12px; left:32px;
+  padding:3px 12px;
+  background:var(--ink);
+  color:var(--paper);
+  font-family:var(--sans);
+  font-weight:700;
+  font-size:10.5px;
+  letter-spacing:.26em;
+  border-radius:2px;
+}
+.organizer h2{
+  font-size:26px;
+  margin:4px 0 10px;
+}
+.organizer h2 em{
+  font-style:normal;
+  background:linear-gradient(to top, var(--mark) 32%, transparent 32%);
+  padding:0 4px;
+}
+.organizer > .lede{
+  margin-bottom:28px;
+  padding-bottom:20px;
+  border-color:var(--rule);
+}
+.organizer h3{
+  font-size:19px;
+  margin:36px 0 6px;
+  padding-bottom:0;
+  border:none;
+}
+.organizer h3 .deci-num{
+  display:inline-block;
+  font-family:var(--mono);
+  font-size:11px;
+  font-weight:500;
+  letter-spacing:.2em;
+  color:var(--accent);
+  background:#fff;
+  padding:3px 9px;
+  margin-right:10px;
+  border:1px solid var(--rule);
+  border-radius:2px;
+  vertical-align:3px;
+}
+.organizer h3 + p{
+  font-family:var(--sans);
+  font-size:14px;
+  color:var(--ink-soft);
+  margin-top:6px;
+  margin-bottom:18px;
+}
+
+.plan-grid{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:14px;
+  margin:20px 0 10px;
+}
+.plan-card{
+  background:#fff;
+  border:1px solid var(--rule);
+  border-radius:4px;
+  padding:22px 20px 18px;
+  font-family:var(--sans);
+  font-size:13.5px;
+  line-height:1.7;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+}
+.plan-card.recommended{
+  border:2px solid var(--accent);
+  box-shadow:0 0 0 4px var(--accent-soft);
+}
+.plan-card.recommended::before{
+  content:"권장";
+  position:absolute;
+  top:-11px; right:16px;
+  background:var(--accent);
+  color:#fff;
+  font-family:var(--sans);
+  font-weight:700;
+  font-size:10.5px;
+  letter-spacing:.16em;
+  padding:3px 10px;
+  border-radius:2px;
+}
+.plan-card .plan-letter{
+  font-family:var(--mono);
+  font-size:11px;
+  font-weight:500;
+  letter-spacing:.2em;
+  color:var(--accent);
+  text-transform:uppercase;
+  margin-bottom:6px;
+}
+.plan-card .plan-title{
+  font-family:var(--serif);
+  font-size:19px;
+  font-weight:700;
+  margin:0 0 4px;
+  line-height:1.35;
+}
+.plan-card .plan-people{
+  font-family:var(--sans);
+  font-size:13px;
+  color:var(--ink-soft);
+  margin-bottom:14px;
+  padding-bottom:14px;
+  border-bottom:1px dotted var(--rule);
+}
+.plan-card .plan-people b{
+  color:var(--ink);
+  font-weight:700;
+  font-size:14px;
+}
+.plan-card .plan-cost{
+  font-family:var(--mono);
+  font-size:13px;
+  color:var(--ink);
+  padding:8px 10px;
+  background:var(--paper);
+  border-radius:3px;
+  margin-bottom:14px;
+  text-align:center;
+  letter-spacing:.02em;
+}
+.plan-card .plan-list{
+  list-style:none;
+  padding:0;
+  margin:0 0 4px;
+  font-size:13px;
+}
+.plan-card .plan-list li{
+  padding:5px 0 5px 18px;
+  position:relative;
+  line-height:1.6;
+}
+.plan-card .plan-list.pros li::before{
+  content:"+";
+  position:absolute;
+  left:2px;
+  color:var(--ok);
+  font-weight:700;
+}
+.plan-card .plan-list.cons li::before{
+  content:"−";
+  position:absolute;
+  left:2px;
+  color:var(--accent);
+  font-weight:700;
+}
+.plan-card .plan-label{
+  font-family:var(--sans);
+  font-size:10.5px;
+  font-weight:700;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--ink-faint);
+  margin:14px 0 6px;
+}
+@media (max-width:820px){
+  .plan-grid{grid-template-columns:1fr}
+}
+
+/* Plan section divider */
+.plan-section-title{
+  font-family:var(--sans);
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.26em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin:34px 0 14px;
+  padding-top:0;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.plan-section-title::after{
+  content:"";
+  flex:1;
+  height:1px;
+  background:var(--rule);
+}
+
+/* Wide single plan card for Team Premium */
+.plan-wide{
+  background:#fff;
+  border:1px solid var(--rule);
+  border-radius:4px;
+  padding:26px 28px;
+  display:grid;
+  grid-template-columns:240px 1fr;
+  gap:32px;
+  margin:14px 0 6px;
+  font-family:var(--sans);
+  font-size:13.5px;
+  line-height:1.7;
+  position:relative;
+}
+.plan-wide::before{
+  content:"조직형";
+  position:absolute;
+  top:-11px; right:16px;
+  background:var(--ink);
+  color:var(--paper);
+  font-family:var(--sans);
+  font-weight:700;
+  font-size:10.5px;
+  letter-spacing:.16em;
+  padding:3px 10px;
+  border-radius:2px;
+}
+.plan-wide .plan-head{
+  padding-right:28px;
+  border-right:1px dotted var(--rule);
+}
+.plan-wide .plan-head .plan-letter{
+  font-family:var(--mono);
+  font-size:11px;
+  font-weight:500;
+  letter-spacing:.2em;
+  color:var(--accent);
+  text-transform:uppercase;
+  margin-bottom:6px;
+}
+.plan-wide .plan-head .plan-title{
+  font-family:var(--serif);
+  font-size:20px;
+  font-weight:700;
+  margin:0 0 6px;
+  line-height:1.3;
+}
+.plan-wide .plan-head .plan-people{
+  font-size:13px;
+  color:var(--ink-soft);
+  margin-bottom:14px;
+}
+.plan-wide .plan-head .plan-people b{
+  color:var(--ink); font-weight:700;
+}
+.plan-wide .plan-head .plan-cost{
+  font-family:var(--mono);
+  font-size:12.5px;
+  color:var(--ink);
+  padding:8px 10px;
+  background:var(--paper);
+  border-radius:3px;
+  text-align:center;
+  line-height:1.5;
+}
+.plan-wide .plan-head .plan-cost small{
+  display:block;
+  font-family:var(--sans);
+  font-size:11px;
+  color:var(--ink-faint);
+  margin-top:3px;
+  letter-spacing:0;
+}
+.plan-wide .plan-body-2col{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:28px;
+}
+@media (max-width:820px){
+  .plan-wide{grid-template-columns:1fr; gap:20px}
+  .plan-wide .plan-head{border-right:none; border-bottom:1px dotted var(--rule); padding:0 0 18px}
+  .plan-wide .plan-body-2col{grid-template-columns:1fr; gap:14px}
+}
+
+.decision-box{
+  margin:20px 0 4px;
+  padding:16px 20px;
+  background:#fff;
+  border:1px solid var(--rule);
+  border-radius:3px;
+}
+.decision-box ul{
+  list-style:none; padding:0; margin:0;
+  font-family:var(--sans); font-size:14px;
+}
+.decision-box li{
+  display:flex; gap:12px; align-items:flex-start;
+  padding:8px 0;
+  border-bottom:1px dotted var(--rule-soft);
+  line-height:1.6;
+}
+.decision-box li:last-child{border-bottom:none}
+.decision-box input{
+  width:18px; height:18px; margin-top:3px; flex:0 0 auto;
+  accent-color:var(--ink);
+}
+.decision-box label{cursor:pointer}
+
+/* Recommendation strip under plan cards */
+.sizing-strip{
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:10px;
+  margin:18px 0 4px;
+  font-family:var(--sans);
+  font-size:12.5px;
+}
+.sizing-strip > div{
+  background:#fff;
+  border:1px solid var(--rule);
+  border-radius:3px;
+  padding:10px 12px;
+  line-height:1.5;
+}
+.sizing-strip b{
+  display:block;
+  font-family:var(--mono);
+  font-size:11px;
+  color:var(--accent);
+  letter-spacing:.15em;
+  text-transform:uppercase;
+  margin-bottom:4px;
+}
+@media (max-width:720px){
+  .sizing-strip{grid-template-columns:1fr 1fr}
+}
+
+/* ───────────────────────── Audience handoff divider ───────────────────────── */
+.audience-handoff{
+  margin:56px 0 44px;
+  padding:44px 32px 38px;
+  text-align:center;
+  border-top:3px double var(--ink);
+  border-bottom:3px double var(--ink);
+  background:linear-gradient(180deg, var(--paper), var(--paper-deep));
+  position:relative;
+}
+.audience-handoff::before,
+.audience-handoff::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  width:80px; height:1px;
+  background:var(--rule);
+  transform:translateX(-50%);
+}
+.audience-handoff::before{top:-1px; background:transparent;}
+.audience-handoff::after{bottom:-16px; background:transparent;}
+.audience-handoff-tag{
+  display:inline-block;
+  background:var(--accent);
+  color:#fff;
+  font-family:var(--sans);
+  font-weight:700;
+  font-size:10.5px;
+  letter-spacing:.26em;
+  padding:5px 14px;
+  border-radius:2px;
+  margin-bottom:20px;
+  text-transform:uppercase;
+}
+.audience-handoff h2{
+  font-family:var(--serif);
+  font-size:clamp(24px, 4vw, 30px);
+  font-weight:700;
+  margin:0 0 14px;
+  line-height:1.35;
+  border:none;
+  padding:0;
+  letter-spacing:-.005em;
+}
+.audience-handoff h2 em{
+  font-style:normal;
+  background:linear-gradient(to top, var(--mark) 32%, transparent 32%);
+  padding:0 6px;
+}
+.audience-handoff p{
+  font-family:var(--sans);
+  font-size:14.5px;
+  line-height:1.8;
+  color:var(--ink-soft);
+  max-width:540px;
+  margin:0 auto;
+}
+.audience-handoff p b{color:var(--ink)}
+.audience-handoff .arrow{
+  display:block;
+  font-family:var(--serif);
+  font-size:32px;
+  color:var(--accent);
+  margin:18px 0 0;
+  line-height:1;
+  animation: handoff-bounce 2.6s ease-in-out infinite;
+}
+@keyframes handoff-bounce{
+  0%,100%{transform:translateY(0); opacity:.7}
+  50%{transform:translateY(6px); opacity:1}
+}
+
+/* Print */
+@media print{
+  .topbar, .os-switch, .code-copy{display:none}
+  body{background:#fff}
+  [data-os="mac"],[data-os="win"]{display:block !important}
+  [data-os="mac"]::before{content:"[ macOS ] "; font-weight:700; color:#1e3a5f}
+  [data-os="win"]::before{content:"[ Windows ] "; font-weight:700; color:#4a2e70}
+  .step{break-inside:avoid}
+  main{max-width:none; padding:0}
+}
+</style>
+</head>
+<body data-active-os="mac">
+
+<!-- Top bar ────────────────────────────── -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="topbar-title">Claude Code 사전 설치 교안</div>
+    <nav class="topbar-nav" aria-label="섹션 이동">
+      <a href="#organizers">교육 담당자</a>
+      <a href="#part0">시작 전</a>
+      <a href="#part1">사전 설치</a>
+      <a href="#part2">Claude Code</a>
+      <a href="#part3">MCP 설정</a>
+      <a href="#part4">용어집</a>
+      <a href="#part5">최종 점검</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="progress-chip">진행 <b id="progress-count">0</b>/<span id="progress-total">0</span></div>
+  </div>
+</div>
+
+<main>
+
+<!-- Instructor credit ────────────────────── -->
+<div class="instructor-credit">
+  <span class="ic-label">강사 · Instructor</span>
+  <span class="ic-name">
+    <span class="ic-role">에스유디자인(주) 대표</span>
+    <span class="ic-person">김길호</span>
+  </span>
+  <a class="ic-link" href="https://litt.ly/kghcoach" target="_blank" rel="noopener">
+    litt.ly/kghcoach <span class="arrow" aria-hidden="true">↗</span>
+  </a>
+</div>
+
+<!-- Cover ────────────────────────────── -->
+<header class="cover">
+  <div class="cover-eyebrow">Pre-Training Handbook · 2026</div>
+  <h1>교육 시작 전, <em>혼자서도 할 수 있는</em><br/>Claude Code 설치 가이드</h1>
+  <p class="cover-sub">
+    본 교안은 <strong>AI 에이전트에게 업무를 위임하는 실습 교육</strong>에 참여하시는 분들을 위한 <strong>사전 자가 설치 자료</strong>입니다.
+    터미널을 처음 열어보시는 분도 순서대로 체크박스만 따라가시면 교육 당일 실습 환경이 완성됩니다.
+  </p>
+  <div class="cover-meta">
+    <span>예상 소요 <b>60–90분</b></span>
+    <span>대상 <b>완전 초보 ~ 중급</b></span>
+    <span>지원 OS <b>macOS · Windows</b></span>
+    <span>발행일 <b>2026. 04</b></span>
+  </div>
+</header>
+
+<!-- Organizer section ────────────────────────────── -->
+<section id="organizers" class="organizer">
+  <h2>이 박스는 수강생이 아닌 <em>교육 주관자</em>를 위한 것입니다</h2>
+  <p class="lede">
+    본 교안을 수강생에게 배포하시기 전에, <strong>두 가지 사항을 먼저 결정</strong>해 주세요.
+    결정 내용에 따라 수강생에게 안내할 계정 가입 방법이 달라집니다.
+    Claude Code의 실습은 각 수강생의 <strong>로컬 PC</strong>에서 이루어지지만,
+    AI 호출은 Anthropic 서버로 이뤄지므로 <strong>구독 계정이 반드시 있어야</strong> 합니다.
+  </p>
+
+  <h3><span class="deci-num">DECISION 01</span>Claude 구독 정책을 결정해 주세요</h3>
+  <p>아래 <strong>네 가지</strong> 운영 방식 중 기업 상황에 맞는 안을 선택하십시오. 인원 규모, 교육 이후 활용 계획, 조직 단위 장기 운영 여부가 선택 기준입니다.</p>
+
+  <div class="plan-section-title">개인 구독 기반 · Personal Plans</div>
+
+  <div class="plan-grid">
+
+    <div class="plan-card">
+      <div class="plan-letter">Option A</div>
+      <div class="plan-title">1인 1계정<br/>개인 Pro 가입</div>
+      <div class="plan-people">수강 인원 무관 · <b>각자 Pro 구독</b></div>
+      <div class="plan-cost">인당 약 $20 / 월</div>
+      <div class="plan-label">장점</div>
+      <ul class="plan-list pros">
+        <li>각자 독립된 사용 할당량 → 실습 중 속도 저하 없음</li>
+        <li>교육 종료 후에도 개인 업무에 바로 활용 가능</li>
+        <li>개인별 대화 기록·설정이 그대로 축적</li>
+      </ul>
+      <div class="plan-label">단점</div>
+      <ul class="plan-list cons">
+        <li>조직 단위 비용 부담이 가장 큼</li>
+        <li>결제 카드/영수증 처리가 수강생별로 필요</li>
+      </ul>
+    </div>
+
+    <div class="plan-card recommended">
+      <div class="plan-letter">Option B</div>
+      <div class="plan-title">Pro 계정 공유<br/>3–4인당 1계정</div>
+      <div class="plan-people">소규모 실습 · <b>4인 × n 그룹 구성</b></div>
+      <div class="plan-cost">그룹당 약 $20 / 월</div>
+      <div class="plan-label">장점</div>
+      <ul class="plan-list pros">
+        <li>1회성 체험 교육에 가장 가성비가 좋음</li>
+        <li>관리 부담이 적음 (소수의 계정만 운영)</li>
+        <li>수강생 PC마다 독립 실습은 그대로 가능</li>
+      </ul>
+      <div class="plan-label">단점</div>
+      <ul class="plan-list cons">
+        <li>한 계정에 5명 이상 동시 접속 시 속도 제한 발생</li>
+        <li>공용 계정이므로 개인 데이터 축적에는 부적합</li>
+      </ul>
+    </div>
+
+    <div class="plan-card">
+      <div class="plan-letter">Option C</div>
+      <div class="plan-title">Max 계정 공유<br/>대규모 동시 실습</div>
+      <div class="plan-people">중대형 실습 · <b>10–15인 규모</b></div>
+      <div class="plan-cost">계정당 약 $100 – $200 / 월</div>
+      <div class="plan-label">장점</div>
+      <ul class="plan-list pros">
+        <li>한 계정으로 넉넉한 사용량 확보 (Pro의 5배 전후)</li>
+        <li>단체 실습을 끊김 없이 진행 가능</li>
+        <li>계정 배분·관리가 간편함</li>
+      </ul>
+      <div class="plan-label">단점</div>
+      <ul class="plan-list cons">
+        <li>인원이 더 많으면 Max 2–3개로 분산 필요</li>
+        <li>교육 직후 구독을 해지하면 수강생 개인 활용은 불가</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="sizing-strip" aria-label="인원별 권장 플랜">
+    <div><b>1 – 4명</b>Option B (Pro 1계정) 권장</div>
+    <div><b>5 – 8명</b>Option B 2그룹 or Option C 1계정</div>
+    <div><b>9 – 15명</b>Option C (Max 1계정) 권장</div>
+    <div><b>16명 이상</b>Option C × 2–3계정 또는 Option A 병행</div>
+  </div>
+
+  <div class="callout note">
+    <span class="callout-title">동시 실습의 속도 제한에 대해.</span>
+    Anthropic의 구독 플랜은 <strong>요청 횟수·토큰 사용량 기준의 할당량</strong>이 적용됩니다.
+    한 계정에 많은 사람이 동시에 접속해 실습하면 할당량이 빨리 소진되어 일시적으로 응답이 지연되거나 대기가 발생할 수 있습니다.
+    정확한 최신 사용량 기준은 <a href="https://support.claude.com/en/articles/8324991-about-usage-limits" target="_blank" rel="noopener">Anthropic 사용량 정책 문서</a>를 참고하시거나,
+    실습 규모가 크다면 Option C를 권장합니다.
+  </div>
+
+  <div class="plan-section-title">조직 구독 기반 · Organization Plan</div>
+
+  <div class="plan-wide">
+    <div class="plan-head">
+      <div class="plan-letter">Option D</div>
+      <div class="plan-title">Team Premium<br/>조직 단위 정식 운영</div>
+      <div class="plan-people">최소 5명 · 최대 150명 · <b>장기 활용 목적</b></div>
+      <div class="plan-cost">
+        seat당 $125 / 월
+        <small>연간 약정 기준 · 월결제 시 seat당 $150</small>
+      </div>
+    </div>
+    <div>
+      <p style="margin-top:0;margin-bottom:14px;color:var(--ink-soft)">
+        관리자가 중앙에서 멤버 seat을 추가·제거하고, 각 멤버는 <strong>본인 개별 워크스페이스와 사용 이력</strong>을 보유하는 정식 조직용 플랜입니다.
+        교육 이후에도 Claude Code를 기업의 <strong>정규 도구로 계속 운영</strong>할 계획이라면 이 옵션이 적합합니다.
+      </p>
+      <div class="plan-body-2col">
+        <div>
+          <div class="plan-label">장점</div>
+          <ul class="plan-list pros">
+            <li>관리자가 한 화면에서 seat 추가·제거 가능</li>
+            <li>각 수강생이 개인 워크스페이스·이력을 그대로 유지</li>
+            <li>모든 seat에 Claude Code 포함</li>
+            <li>Slack · MS365 연동으로 업무 통합</li>
+          </ul>
+        </div>
+        <div>
+          <div class="plan-label">단점·주의</div>
+          <ul class="plan-list cons">
+            <li>1인당 비용이 Pro의 약 6배 수준</li>
+            <li>최소 5 seat부터만 계약 가능 (소규모 조직엔 과중)</li>
+            <li>월결제는 seat당 $150로 더 비쌈 — 연간 약정 권장</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout warn" style="margin-top:16px">
+    <span class="callout-title">⚠️ Team <u>Standard</u>는 선택하지 마세요.</span>
+    Team 플랜에는 <strong>Team Standard($25/seat/월)</strong>와 <strong>Team Premium($125/seat/월)</strong> 두 종류가 있습니다.
+    이 중 <strong>Claude Code가 포함된 것은 Team Premium뿐</strong>입니다.
+    본 교육의 실습은 Claude Code가 있어야 가능하므로, Team 플랜을 선택하시는 경우 반드시 <strong>Team Premium으로 결제</strong>해야 합니다.
+  </div>
+
+  <h3><span class="deci-num">DECISION 02</span>수강생에게 안내할 계정 가입 방법</h3>
+  <p>위에서 선택한 옵션에 따라 수강생에게 전달할 안내 내용이 달라집니다.</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>선택한 옵션</th><th>수강생에게 전달할 내용</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Option A</strong><br/>1인 1계정</td>
+        <td>
+          "교육 전까지 <strong>본인 Google 계정</strong>으로 <a href="https://claude.ai" target="_blank" rel="noopener">claude.ai</a>에 가입하고
+          <strong>Pro 요금제 구독</strong>까지 완료해 주세요. (결제는 각자)"<br/>
+          <small style="color:var(--ink-faint)">Google 가입을 권장하는 이유 — 추후 교육·업무 간 계정 이동이 가장 간편합니다.</small>
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Option B / C</strong><br/>계정 공유</td>
+        <td>
+          교육 담당자가 미리 계정을 만들고 <strong>Pro 또는 Max 구독</strong>을 등록한 뒤,
+          교육 당일 수강생에게 <strong>공용 이메일/비밀번호</strong>를 현장에서 배포합니다.
+          수강생에게 전달할 안내는 "로그인 정보는 당일 현장에서 배포하니, 교안의 <strong>Part 2.1은 건너뛰고 Part 2.2부터 진행</strong>하셔도 됩니다" 입니다.<br/>
+          <small style="color:var(--ink-faint)">주의 — 공용 계정 로그인 정보는 외부로 공유되지 않도록 관리하십시오.</small>
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Option D</strong><br/>Team Premium</td>
+        <td>
+          교육 담당자가 <a href="https://claude.com/pricing" target="_blank" rel="noopener">claude.com/pricing</a>에서
+          <strong>Team Premium</strong> 플랜을 구매한 뒤, 관리 콘솔에서 수강생의 업무 이메일로 <strong>초대 메일</strong>을 발송합니다.
+          수강생에게 전달할 안내는 "<strong>[Invitation to join Claude Team] 제목의 메일</strong>을 수신해 <strong>Accept invitation</strong>을 누른 뒤,
+          교안 <strong>Part 2.1의 유료 구독 결제 단계는 건너뛰고 Part 2.2부터</strong> 진행하세요" 입니다.<br/>
+          <small style="color:var(--ink-faint)">수강생 이메일 목록(최소 5명)을 교육 최소 <strong>3~5일 전</strong>까지 확보하시는 것이 안전합니다.</small>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="decision-box">
+    <ul>
+      <li><input type="checkbox" id="org-chk-1"/><label for="org-chk-1"><strong>구독 옵션(A / B / C)을 확정</strong>했다</label></li>
+      <li><input type="checkbox" id="org-chk-2"/><label for="org-chk-2">결제 및 <strong>요금제 등록을 완료</strong>했다 (Option B, C인 경우)</label></li>
+      <li><input type="checkbox" id="org-chk-3"/><label for="org-chk-3">수강생에게 <strong>가입 방식을 안내</strong>했다 (Option A인 경우)</label></li>
+      <li><input type="checkbox" id="org-chk-4"/><label for="org-chk-4">당일 배포할 <strong>공용 계정 정보를 준비</strong>했다 (Option B, C인 경우)</label></li>
+    </ul>
+  </div>
+
+  <div class="callout tip" style="margin-top:24px">
+    <span class="callout-title">수강생에게 공유하실 때.</span>
+    결정이 완료되었다면 수강생에게 본 문서 링크를 공유하시되, <strong>위 DECISION 02 표에서 선택한 옵션에 해당하는 가입 안내 문구</strong>를 별도 공지로 함께 전달해 주시면 혼란을 줄일 수 있습니다.
+  </div>
+</section>
+
+<!-- Audience handoff — 수강생 섹션 시작 구분선 ─────────── -->
+<div class="audience-handoff" role="separator" aria-label="수강자 섹션 시작">
+  <div class="audience-handoff-tag">For Trainees · 수강생용</div>
+  <h2>여기부터 <em>수강생 여러분</em>을 위한 내용입니다</h2>
+  <p>
+    교육 주관자가 위에서 확정한 <b>계정 가입 방식</b>을 먼저 확인하신 뒤,
+    아래의 순서대로 <b>본인 노트북</b>에 실습 환경을 설치해 주시면 됩니다.
+    상단의 <b>OS 탭(macOS / Windows)</b>부터 선택하신 다음 진행하세요.
+  </p>
+  <span class="arrow" aria-hidden="true">↓</span>
+</div>
+<div class="os-switch" role="region" aria-label="운영체제 선택">
+  <div class="os-switch-label"><b>1단계.</b> 사용하시는 컴퓨터의 운영체제를 먼저 선택해 주세요 →</div>
+  <div class="os-tabs" role="tablist">
+    <button class="os-tab" role="tab" data-os-tab="mac" aria-selected="true">macOS</button>
+    <button class="os-tab" role="tab" data-os-tab="win" aria-selected="false">Windows</button>
+  </div>
+</div>
+
+<!-- TOC ────────────────────────────── -->
+<div class="toc">
+  <h4>이 문서의 구성</h4>
+  <ol>
+    <li><a href="#organizers">[교육 담당자] 구독 정책 결정 및 계정 전달 방식</a></li>
+    <li><a href="#part0">시작하기 전 — 준비물과 용어 한 조각</a></li>
+    <li><a href="#part1">Part 1. 사전 설치 (Node.js / Git / Python / VS Code)</a></li>
+    <li><a href="#part2">Part 2. Claude 가입 및 Claude Code 설치</a></li>
+    <li><a href="#part3">Part 3. MCP 설정 (Playwright · Context7)</a></li>
+    <li><a href="#part4">Part 4. 꼭 알고 오셔야 할 용어집</a></li>
+    <li><a href="#part5">Part 5. 최종 점검 체크리스트</a></li>
+    <li><a href="#faq">부록. 자주 발생하는 오류 FAQ</a></li>
+  </ol>
+</div>
+
+<!-- ==================================== -->
+<!-- PART 0                                -->
+<!-- ==================================== -->
+<section id="part0">
+  <div class="part-label">Part 0 · Before You Start</div>
+  <h2><span class="num">00</span>시작하기 전에</h2>
+  <p class="lede">
+    본격적인 설치에 앞서 <strong>꼭 준비하셔야 할 것</strong>과, 이 교안을 읽는 방법을 먼저 안내합니다.
+    용어가 낯설어도 괜찮습니다. Part 4의 <a href="#part4">용어집</a>에 모두 정리되어 있으니, 막히실 때마다 넘어가서 확인하시면 됩니다.
+  </p>
+
+  <h3>준비물</h3>
+  <ul class="plain">
+    <li>안정된 <strong>인터넷 연결</strong> (설치 파일 다운로드에 약 1~3GB가 필요합니다)</li>
+    <li>본인 <strong>관리자 권한</strong>이 있는 노트북 또는 데스크탑 (회사 지급 PC의 경우 IT 담당자에게 설치 권한 요청이 필요할 수 있습니다)</li>
+    <li>여유 저장공간 <strong>최소 5GB</strong></li>
+    <li>본인 명의의 <strong>이메일 계정</strong> (회사 이메일 권장)</li>
+    <li>결제용 <strong>신용카드</strong> 또는 해외결제 가능 체크카드 (Claude 유료 구독 결제용)</li>
+  </ul>
+
+  <h3>이 교안을 따라가시는 법</h3>
+  <div class="callout tip">
+    <span class="callout-title">읽기 전 확인.</span>
+    상단의 <strong>macOS / Windows 탭</strong>을 먼저 선택해 주세요. 본인 OS에 해당하는 설명만 보이도록 자동으로 필터링됩니다.
+    체크박스를 클릭하시면 진행 상황이 <strong>브라우저에 자동 저장</strong>되어, 창을 닫았다 다시 열어도 이어서 하실 수 있습니다.
+  </div>
+
+  <div class="callout note">
+    <span class="callout-title">터미널이라는 단어가 낯설다면.</span>
+    앞으로 자주 나올 <strong>"터미널"</strong>은 컴퓨터에 명령어를 직접 입력하는 검은(또는 흰) 창입니다.
+    macOS에서는 <span class="kbd">⌘ Cmd</span> + <span class="kbd">Space</span>를 눌러 "터미널"을 검색해 열고,
+    Windows에서는 시작 메뉴에서 <strong>"PowerShell"</strong>을 검색해 <strong>관리자 권한으로 실행</strong>합니다.
+    이 교안의 모든 명령어는 그 창에 붙여넣고 <span class="kbd">Enter</span>를 누르시면 됩니다.
+  </div>
+</section>
+
+<!-- ==================================== -->
+<!-- PART 1                                -->
+<!-- ==================================== -->
+<section id="part1">
+  <div class="part-label">Part 1 · Prerequisites</div>
+  <h2><span class="num">01</span>사전 설치 — 기초 도구 4가지</h2>
+  <p class="lede">
+    Claude Code가 제대로 동작하기 위해서는 <strong>Node.js, Git, Python, VS Code</strong> 네 가지 기본 도구가 필요합니다.
+    각 도구가 왜 필요한지 간단히 설명드리고, OS별로 한 단계씩 안내해 드립니다. <strong>순서대로 따라오시면 됩니다.</strong>
+  </p>
+
+  <table class="tbl">
+    <thead><tr><th>도구</th><th>역할</th><th>설치 시간</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Node.js</strong></td><td>MCP 확장 도구(Playwright, Context7 등)를 실행하는 런타임 환경</td><td>약 5분</td></tr>
+      <tr><td><strong>Git</strong></td><td>코드/문서의 변경 이력을 관리하는 도구. Claude Code가 내부적으로 사용합니다.</td><td>약 3–5분</td></tr>
+      <tr><td><strong>Python</strong></td><td>Claude가 데이터 분석·자동화 코드를 실행할 때 사용</td><td>약 5분</td></tr>
+      <tr><td><strong>VS Code</strong></td><td>Claude가 작성한 코드와 파일을 열어보기 위한 에디터(편집기)</td><td>약 5분</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ───────── 1.1 Node.js ───────── -->
+  <h3>1.1 Node.js 설치</h3>
+
+  <!-- macOS -->
+  <div class="step" data-os="mac">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-node-mac" />
+      <label class="step-title" for="chk-node-mac">
+        Node.js 공식 설치 프로그램 다운로드 <span class="tag tag-mac">macOS</span>
+      </label>
+    </div>
+    <div class="step-body">
+      <p>아래 공식 사이트 링크에 접속하면 자동으로 <strong>macOS용 LTS 버전(현재 22.x 또는 24.x 'Krypton')</strong>이 표시됩니다. "macOS Installer(.pkg)"를 눌러 다운로드합니다.</p>
+      <p>👉 <a href="https://nodejs.org/en/download" target="_blank" rel="noopener">https://nodejs.org/en/download</a></p>
+      <p>다운로드가 끝나면 <code>.pkg</code> 파일을 더블클릭하여 실행하고, 안내에 따라 <strong>"계속" → "동의" → "설치"</strong>를 눌러 완료합니다. 관리자 비밀번호를 요구하면 Mac 로그인 비밀번호를 입력하시면 됩니다.</p>
+    </div>
+  </div>
+
+  <div class="step" data-os="mac">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-node-mac-verify" />
+      <label class="step-title" for="chk-node-mac-verify">설치 확인 <span class="tag tag-mac">macOS</span></label>
+    </div>
+    <div class="step-body">
+      <p>터미널을 새로 열고(<span class="kbd">⌘</span> + <span class="kbd">Space</span> → "터미널" 검색) 아래 명령어를 붙여넣은 뒤 <span class="kbd">Enter</span>를 누릅니다.</p>
+      <div class="code" data-copyable>
+        <span class="cmd-line"><span class="shell">$ </span>node --version</span>
+        <span class="cmd-line"><span class="shell">$ </span>npm --version</span>
+        <button class="code-copy">복사</button>
+      </div>
+      <p>각각 <code>v22.x.x</code> 이상, <code>10.x.x</code> 이상과 비슷한 버전 번호가 나오면 성공입니다.</p>
+    </div>
+  </div>
+
+  <!-- Windows -->
+  <div class="step" data-os="win">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-node-win" />
+      <label class="step-title" for="chk-node-win">
+        Node.js 공식 설치 프로그램 다운로드 <span class="tag tag-win">Windows</span>
+      </label>
+    </div>
+    <div class="step-body">
+      <p>아래 공식 사이트에서 <strong>Windows Installer(.msi)</strong>를 다운로드합니다. 보통 자동으로 <strong>LTS 버전(현재 22.x 또는 24.x 'Krypton')</strong>이 추천됩니다.</p>
+      <p>👉 <a href="https://nodejs.org/en/download" target="_blank" rel="noopener">https://nodejs.org/en/download</a></p>
+      <p>다운로드한 <code>.msi</code> 파일을 더블클릭하여 실행합니다. 설치 마법사에서 <strong>모든 옵션은 기본값 그대로 두고</strong> "Next"를 계속 누르면 됩니다.</p>
+      <div class="callout warn">
+        <span class="callout-title">⚠️ 중요.</span>
+        설치 도중 <strong>"Automatically install the necessary tools..."</strong> (추가 도구 자동 설치) 체크박스가 나오면 <strong>반드시 체크</strong>한 뒤 진행해 주세요. 이 옵션이 C++ 빌드 도구를 함께 설치하여 이후 MCP 설치 시 오류를 예방합니다.
+      </div>
+    </div>
+  </div>
+
+  <div class="step" data-os="win">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-node-win-verify" />
+      <label class="step-title" for="chk-node-win-verify">설치 확인 <span class="tag tag-win">Windows</span></label>
+    </div>
+    <div class="step-body">
+      <p>시작 메뉴에서 <strong>"PowerShell"</strong>을 검색해 실행합니다. 아래 명령어를 붙여넣고 <span class="kbd">Enter</span>를 누릅니다.</p>
+      <div class="code" data-copyable>
+        <span class="cmd-line"><span class="shell">PS&gt; </span>node --version</span>
+        <span class="cmd-line"><span class="shell">PS&gt; </span>npm --version</span>
+        <button class="code-copy">복사</button>
+      </div>
+      <p>각각 <code>v22.x.x</code> 이상, <code>10.x.x</code> 이상 버전이 출력되면 성공입니다.</p>
+      <div class="callout tip">
+        <span class="callout-title">💡 TIP.</span>
+        PowerShell 창에서 붙여넣기는 <span class="kbd">Ctrl</span> + <span class="kbd">V</span>가 아니라 <strong>마우스 오른쪽 버튼 클릭</strong> 또는 <span class="kbd">Shift</span> + <span class="kbd">Insert</span>입니다.
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────── 1.2 Git ───────── -->
+  <h3>1.2 Git 설치</h3>
+
+  <!-- macOS -->
+  <div class="step" data-os="mac">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-git-mac" />
+      <label class="step-title" for="chk-git-mac">Git 설치 (가장 쉬운 방법) <span class="tag tag-mac">macOS</span></label>
+    </div>
+    <div class="step-body">
+      <p>macOS에는 Apple이 제공하는 개발자 도구 패키지에 Git이 포함되어 있습니다. 터미널을 열고 아래 명령어 <strong>한 줄</strong>을 실행하시면 됩니다.</p>
+      <div class="code" data-copyable>
+        <span class="cmd-line"><span class="shell">$ </span>xcode-select --install</span>
+        <button class="code-copy">복사</button>
+      </div>
+      <p>작은 창이 뜨면서 "도구 설치" 여부를 묻습니다. <strong>"설치"</strong>를 눌러 진행해 주세요. 설치는 자동으로 진행되며 5~15분 정도 걸립니다.</p>
+      <div class="callout note">
+        <span class="callout-title">이미 설치되어 있다는 메시지가 나온다면?</span>
+        <code>xcode-select: error: command line tools are already installed</code> 같은 메시지는 <strong>"이미 잘 설치되어 있다"</strong>는 뜻이니 그대로 진행하시면 됩니다.
+      </div>
+    </div>
+  </div>
+
+  <div class="step" data-os="mac">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-git-mac-verify" />
+      <label class="step-title" for="chk-git-mac-verify">설치 확인 <span class="tag tag-mac">macOS</span></label>
+    </div>
+    <div class="step-body">
+      <div class="code" data-copyable>
+        <span class="cmd-line"><span class="shell">$ </span>git --version</span>
+        <button class="code-copy">복사</button>
+      </div>
+      <p><code>git version 2.xx.x</code>처럼 버전 번호가 표시되면 성공입니다.</p>
+    </div>
+  </div>
+
+  <!-- Windows -->
+  <div class="step" data-os="win">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-git-win" />
+      <label class="step-title" for="chk-git-win">Git for Windows 다운로드 <span class="tag tag-win">Windows</span></label>
+    </div>
+    <div class="step-body">
+      <p>Windows에서는 <strong>Git for Windows</strong>라는 별도 설치 프로그램이 필요합니다. Claude Code가 내부적으로 이 Git에 포함된 Git Bash를 사용하기 때문에 <strong>반드시 설치</strong>하셔야 합니다.</p>
+      <p>👉 <a href="https://git-scm.com/downloads/win" target="_blank" rel="noopener">https://git-scm.com/downloads/win</a></p>
+      <p><strong>"64-bit Git for Windows Setup"</strong>을 클릭해 다운로드합니다.</p>
+    </div>
+  </div>
+
+  <div class="step" data-os="win">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-git-win-install" />
+      <label class="step-title" for="chk-git-win-install">Git 설치 (옵션은 모두 기본값) <span class="tag tag-win">Windows</span></label>
+    </div>
+    <div class="step-body">
+      <p>다운로드한 <code>.exe</code> 파일을 더블클릭하여 실행합니다. <strong>설치 옵션이 매우 많지만 모두 기본값 그대로 "Next"를 누르시면 됩니다.</strong> 마지막에 "Install"을 눌러 설치를 완료합니다.</p>
+      <div class="callout warn">
+        <span class="callout-title">⚠️ 설치 후 반드시.</span>
+        PowerShell 창이 열려 있었다면 <strong>모두 닫고 새로 여세요.</strong> 새로 열지 않으면 <code>git</code> 명령어가 인식되지 않습니다.
+      </div>
+    </div>
+  </div>
+
+  <div class="step" data-os="win">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-git-win-verify" />
+      <label class="step-title" for="chk-git-win-verify">설치 확인 <span class="tag tag-win">Windows</span></label>
+    </div>
+    <div class="step-body">
+      <p>PowerShell을 새로 열고 아래를 입력합니다.</p>
+      <div class="code" data-copyable>
+        <span class="cmd-line"><span class="shell">PS&gt; </span>git --version</span>
+        <button class="code-copy">복사</button>
+      </div>
+      <p><code>git version 2.xx.x.windows.x</code>와 비슷한 결과가 나오면 성공입니다.</p>
+    </div>
+  </div>
+
+  <!-- ───────── 1.3 Python ───────── -->
+  <h3>1.3 Python 설치</h3>
+
+  <!-- macOS -->
+  <div class="step" data-os="mac">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-py-mac" />
+      <label class="step-title" for="chk-py-mac">Python 공식 설치 프로그램 다운로드 <span class="tag tag-mac">macOS</span></label>
+    </div>
+    <div class="step-body">
+      <p>공식 사이트에서 <strong>macOS 64-bit universal2 installer</strong>를 받으시면 됩니다. 2026년 4월 기준 최신 안정 버전은 <strong>Python 3.14.x</strong>입니다.</p>
+      <p>👉 <a href="https://www.python.org/downloads/macos/" target="_blank" rel="noopener">https://www.python.org/downloads/macos/</a></p>
+      <p>내려받은 <code>.pkg</code> 파일을 더블클릭해 설치합니다. 옵션은 모두 기본값으로 두고 진행하시면 됩니다.</p>
+    </div>
+  </div>
+
+  <div class="step" data-os="mac">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-py-mac-verify" />
+      <label class="step-title" for="chk-py-mac-verify">설치 확인 <span class="tag tag-mac">macOS</span></label>
+    </div>
+    <div class="step-body">
+      <p>터미널에서 아래 명령어로 버전을 확인합니다. macOS에서는 <strong>"python"이 아닌 "python3"</strong>을 사용해야 합니다.</p>
+      <div class="code" data-copyable>
+        <span class="cmd-line"><span class="shell">$ </span>python3 --version</span>
+        <span class="cmd-line"><span class="shell">$ </span>pip3 --version</span>
+        <button class="code-copy">복사</button>
+      </div>
+      <p><code>Python 3.14.x</code>(또는 3.13.x) 및 <code>pip 25.x</code>가 나오면 성공입니다.</p>
+    </div>
+  </div>
+
+  <!-- Windows -->
+  <div class="step" data-os="win">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-py-win" />
+      <label class="step-title" for="chk-py-win">Python 공식 설치 프로그램 다운로드 <span class="tag tag-win">Windows</span></label>
+    </div>
+    <div class="step-body">
+      <p>공식 사이트에서 <strong>Windows installer (64-bit)</strong>을 받습니다. 2026년 4월 기준 최신 안정 버전은 <strong>Python 3.14.x</strong>입니다.</p>
+      <p>👉 <a href="https://www.python.org/downloads/windows/" target="_blank" rel="noopener">https://www.python.org/downloads/windows/</a></p>
+    </div>
+  </div>
+
+  <div class="step" data-os="win">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-py-win-install" />
+      <label class="step-title" for="chk-py-win-install">Python 설치 — PATH 체크박스 필수 <span class="tag tag-win">Windows</span></label>
+    </div>
+    <div class="step-body">
+      <div class="callout warn">
+        <span class="callout-title">⚠️ 절대 놓치면 안 되는 한 가지.</span>
+        설치 프로그램을 실행하면 첫 화면 <strong>아래쪽에 "Add python.exe to PATH"</strong>(또는 "Add Python to environment variables") 체크박스가 있습니다. <strong>반드시 이 체크박스를 먼저 클릭</strong>한 뒤 <strong>"Install Now"</strong>를 눌러주세요. 이것을 빠뜨리면 터미널에서 python 명령어를 인식하지 못합니다.
+      </div>
+      <p>설치가 끝나면 <strong>"Disable path length limit"</strong> 버튼이 보이면 한 번 눌러 활성화한 뒤 창을 닫습니다.</p>
+    </div>
+  </div>
+
+  <div class="step" data-os="win">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-py-win-verify" />
+      <label class="step-title" for="chk-py-win-verify">설치 확인 <span class="tag tag-win">Windows</span></label>
+    </div>
+    <div class="step-body">
+      <p>PowerShell을 <strong>새로 열고</strong> 아래를 입력합니다.</p>
+      <div class="code" data-copyable>
+        <span class="cmd-line"><span class="shell">PS&gt; </span>python --version</span>
+        <span class="cmd-line"><span class="shell">PS&gt; </span>pip --version</span>
+        <button class="code-copy">복사</button>
+      </div>
+      <p><code>Python 3.14.x</code>, <code>pip 25.x</code> 같은 결과가 나오면 성공입니다.</p>
+    </div>
+  </div>
+
+  <!-- ───────── 1.4 VS Code ───────── -->
+  <h3>1.4 VS Code (Visual Studio Code) 설치</h3>
+  <p>VS Code는 Microsoft가 만든 <strong>무료 코드 에디터</strong>입니다. Claude Code가 만들어 낸 코드와 문서를 직접 열어 살펴보고 수정할 때 사용합니다.</p>
+
+  <!-- macOS -->
+  <div class="step" data-os="mac">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-vsc-mac" />
+      <label class="step-title" for="chk-vsc-mac">VS Code 다운로드 및 설치 <span class="tag tag-mac">macOS</span></label>
+    </div>
+    <div class="step-body">
+      <p>공식 사이트에 접속하여 <strong>"Mac"</strong> 버튼 (Apple Silicon 또는 Intel chip)을 눌러 다운로드합니다. 본인 Mac의 칩 종류를 모르시겠다면 <strong>"Universal"</strong> 옵션이 있으면 그것을 선택하세요.</p>
+      <p>👉 <a href="https://code.visualstudio.com/Download" target="_blank" rel="noopener">https://code.visualstudio.com/Download</a></p>
+      <p>내려받은 <code>.zip</code> 파일을 더블클릭하면 "Visual Studio Code.app"이 만들어집니다. 이를 마우스로 드래그하여 <strong>"응용 프로그램(Applications)" 폴더</strong>로 옮긴 뒤 실행합니다.</p>
+    </div>
+  </div>
+
+  <!-- Windows -->
+  <div class="step" data-os="win">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-vsc-win" />
+      <label class="step-title" for="chk-vsc-win">VS Code 다운로드 및 설치 <span class="tag tag-win">Windows</span></label>
+    </div>
+    <div class="step-body">
+      <p>공식 사이트에서 <strong>"Windows" — User Installer (x64)</strong>를 다운로드합니다.</p>
+      <p>👉 <a href="https://code.visualstudio.com/Download" target="_blank" rel="noopener">https://code.visualstudio.com/Download</a></p>
+      <p>받은 <code>.exe</code> 파일을 실행해 설치합니다. 설치 옵션에서 <strong>"PATH에 추가"</strong>와 <strong>"바로가기 생성"</strong>는 모두 체크된 상태 그대로 두고 진행하시면 됩니다.</p>
+    </div>
+  </div>
+
+  <div class="step" data-os="mac">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-vsc-mac-cli" />
+      <label class="step-title" for="chk-vsc-mac-cli">터미널에서 VS Code 열 수 있도록 설정 <span class="tag tag-mac">macOS</span></label>
+    </div>
+    <div class="step-body">
+      <p>VS Code를 실행한 뒤, <span class="kbd">⌘</span> + <span class="kbd">Shift</span> + <span class="kbd">P</span>를 눌러 명령 팔레트를 엽니다.
+      상단 검색창에 <strong>"Shell Command: Install 'code' command in PATH"</strong>를 입력하고 <span class="kbd">Enter</span>로 실행합니다.</p>
+      <p>이제 터미널에서 <code>code .</code> 이라고 입력하면 현재 폴더를 VS Code로 바로 열 수 있습니다.</p>
+    </div>
+  </div>
+
+</section>
+
+<!-- ==================================== -->
+<!-- PART 2                                -->
+<!-- ==================================== -->
+<section id="part2">
+  <div class="part-label">Part 2 · Claude Code</div>
+  <h2><span class="num">02</span>Claude 가입 및 Claude Code 설치</h2>
+  <p class="lede">
+    기초 도구 설치가 끝났다면 이제 본 교육의 주인공인 <strong>Claude Code</strong>를 설치합니다.
+    Claude는 Anthropic이라는 회사에서 만든 AI이며, 본 교육에서 실습할 Claude Code는 <strong>터미널에서 AI와 함께 일하는 도구</strong>입니다.
+  </p>
+
+  <!-- ───────── 2.1 계정 ───────── -->
+  <h3>2.1 Anthropic 계정 가입 및 구독</h3>
+
+  <div class="step">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-signup" />
+      <label class="step-title" for="chk-signup">Claude 계정 만들기 <span class="tag tag-both">공통</span></label>
+    </div>
+    <div class="step-body">
+      <p>아래 사이트에 접속하여 이메일 또는 Google 계정으로 가입합니다.</p>
+      <p>👉 <a href="https://claude.ai" target="_blank" rel="noopener">https://claude.ai</a></p>
+      <p>가입 후 몇 가지 환영 질문에 답하면 바로 웹에서 Claude와 대화할 수 있습니다. 여기까지는 <strong>무료</strong>입니다.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-subscribe" />
+      <label class="step-title" for="chk-subscribe">유료 구독(Pro 또는 Max) 결제 <span class="tag tag-both">공통</span></label>
+    </div>
+    <div class="step-body">
+      <div class="callout warn">
+        <span class="callout-title">⚠️ 꼭 확인하세요.</span>
+        <strong>무료 요금제로는 Claude Code를 사용할 수 없습니다.</strong>
+        교육에 참여하려면 <strong>Pro(월 $20)</strong> 또는 더 높은 <strong>Max($100~$200)</strong> 플랜 구독이 필요합니다.
+        개인 교육이라면 Pro로 충분합니다.
+      </div>
+      <p>웹 claude.ai 로그인 상태에서 왼쪽 사이드바 하단의 <strong>본인 이름 → Upgrade plan</strong> (또는 <strong>"Settings" → "Plans & Billing"</strong>)으로 들어가 <strong>Pro</strong> 구독을 결제합니다. 해외결제가 가능한 카드가 필요하며, 언제든 해지할 수 있습니다.</p>
+      <p>👉 요금제 페이지: <a href="https://claude.com/pricing" target="_blank" rel="noopener">https://claude.com/pricing</a></p>
+    </div>
+  </div>
+
+  <!-- ───────── 2.2 Claude Code 설치 ───────── -->
+  <h3>2.2 Claude Code 설치</h3>
+
+  <p>2025년 10월부터 Anthropic은 <strong>Node.js가 필요 없는 Native Installer</strong>를 기본 설치 방식으로 권장하고 있습니다. 우리는 이미 Node.js를 설치했지만, <strong>자동 업데이트가 지원되고 설정이 더 단순한</strong> Native 방식으로 설치하겠습니다.</p>
+
+  <div class="callout note">
+    <span class="callout-title">그럼 Node.js는 왜 미리 설치했을까요?</span>
+    Claude Code <strong>자체를 실행하는 데는 Node.js가 필요하지 않습니다.</strong>
+    하지만 본 교육 이후 여러분이 Claude Code를 실제 업무에 활용하기 시작하면,
+    <strong>수많은 보조 도구·MCP 서버·플러그인이 Node.js 프레임워크 위에서 동작</strong>합니다.
+    바로 우리가 Part 3에서 설치할 <strong>Playwright MCP와 Context7 MCP도 모두 Node.js의 <code>npx</code> 명령으로 실행</strong>되고,
+    앞으로 마주할 거의 모든 확장 도구가 같은 구조입니다.
+    따라서 Node.js는 Claude Code 본체를 위한 것이 아니라, <strong>"앞으로 Claude Code와 함께 쓰게 될 개발 생태계 전체"의 기반</strong>으로 미리 깔아 두는 것입니다.
+    처음부터 설치해 두어야 실습이 끊김 없이 진행됩니다.
+  </div>
+
+  <!-- macOS -->
+  <div class="step" data-os="mac">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-cc-install-mac" />
+      <label class="step-title" for="chk-cc-install-mac">Claude Code 설치 — 터미널 한 줄 <span class="tag tag-mac">macOS</span></label>
+    </div>
+    <div class="step-body">
+      <p>터미널을 열고 아래 명령어를 붙여넣은 뒤 <span class="kbd">Enter</span>를 누릅니다. 설치에 1~2분 정도 걸립니다.</p>
+      <div class="code" data-copyable>
+        <span class="cmd-line"><span class="shell">$ </span>curl -fsSL https://claude.ai/install.sh | bash</span>
+        <button class="code-copy">복사</button>
+      </div>
+      <p>설치가 끝나면 터미널 창을 <strong>완전히 닫고 다시 열어</strong> 주세요. 그래야 <code>claude</code> 명령어가 인식됩니다.</p>
+    </div>
+  </div>
+
+  <div class="step" data-os="mac">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-cc-verify-mac" />
+      <label class="step-title" for="chk-cc-verify-mac">설치 확인 <span class="tag tag-mac">macOS</span></label>
+    </div>
+    <div class="step-body">
+      <div class="code" data-copyable>
+        <span class="cmd-line"><span class="shell">$ </span>claude --version</span>
+        <button class="code-copy">복사</button>
+      </div>
+      <p><code>2.x.x (Claude Code)</code>와 같은 버전이 표시되면 성공입니다.</p>
+    </div>
+  </div>
+
+  <!-- Windows -->
+  <div class="step" data-os="win">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-cc-install-win" />
+      <label class="step-title" for="chk-cc-install-win">Claude Code 설치 — PowerShell 한 줄 <span class="tag tag-win">Windows</span></label>
+    </div>
+    <div class="step-body">
+      <div class="callout warn">
+        <span class="callout-title">⚠️ 반드시 PowerShell에서.</span>
+        CMD(명령 프롬프트)가 아닌 <strong>PowerShell</strong>에서 실행해야 합니다.
+        화면에 <code>PS C:\Users\...&gt;</code> 처럼 맨 앞에 <strong>"PS"</strong>가 붙어 있는지 확인해 주세요.
+      </div>
+      <p>처음 한 번만, 설치 스크립트 실행이 허용되도록 아래 명령어를 실행합니다(한 번만).</p>
+      <div class="code" data-copyable>
+        <span class="cmd-line"><span class="shell">PS&gt; </span>Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser</span>
+        <button class="code-copy">복사</button>
+      </div>
+      <p>"변경하시겠습니까" 질문에 <span class="kbd">Y</span>를 입력하고 <span class="kbd">Enter</span>. 이어서 설치 명령을 실행합니다.</p>
+      <div class="code" data-copyable>
+        <span class="cmd-line"><span class="shell">PS&gt; </span>irm https://claude.ai/install.ps1 | iex</span>
+        <button class="code-copy">복사</button>
+      </div>
+      <p>설치가 끝나면 <strong>PowerShell 창을 완전히 닫고 새로 열어</strong> 주세요.</p>
+    </div>
+  </div>
+
+  <div class="step" data-os="win">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-cc-verify-win" />
+      <label class="step-title" for="chk-cc-verify-win">설치 확인 <span class="tag tag-win">Windows</span></label>
+    </div>
+    <div class="step-body">
+      <div class="code" data-copyable>
+        <span class="cmd-line"><span class="shell">PS&gt; </span>claude --version</span>
+        <button class="code-copy">복사</button>
+      </div>
+      <p><code>2.x.x (Claude Code)</code>와 같은 버전 번호가 나오면 설치 성공입니다.</p>
+      <div class="callout info">
+        <span class="callout-title">ℹ️ 더 자세한 진단이 필요할 때.</span>
+        <code>claude doctor</code> 명령어를 실행하면 환경이 제대로 구성됐는지 종합적으로 점검해 줍니다.
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────── 2.3 로그인 & 최초 실행 ───────── -->
+  <h3>2.3 최초 실행 및 로그인</h3>
+
+  <div class="step">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-cc-first-run" />
+      <label class="step-title" for="chk-cc-first-run">실습용 폴더를 만들고 Claude Code 실행 <span class="tag tag-both">공통</span></label>
+    </div>
+    <div class="step-body">
+      <p>우선 실습에 사용할 빈 폴더를 홈 디렉토리에 만들고 그 안으로 이동합니다.</p>
+      <div class="code" data-copyable data-os="mac">
+        <span class="cmd-line"><span class="shell">$ </span>mkdir ~/claude-practice</span>
+        <span class="cmd-line"><span class="shell">$ </span>cd ~/claude-practice</span>
+        <span class="cmd-line"><span class="shell">$ </span>claude</span>
+        <button class="code-copy">복사</button>
+      </div>
+      <div class="code" data-copyable data-os="win">
+        <span class="cmd-line"><span class="shell">PS&gt; </span>mkdir $HOME\claude-practice</span>
+        <span class="cmd-line"><span class="shell">PS&gt; </span>cd $HOME\claude-practice</span>
+        <span class="cmd-line"><span class="shell">PS&gt; </span>claude</span>
+        <button class="code-copy">복사</button>
+      </div>
+      <p>처음 <code>claude</code>를 실행하면 자동으로 <strong>웹 브라우저가 열리며 로그인 화면</strong>이 뜹니다. 2.1에서 가입한 계정으로 로그인하고 <strong>"Authorize"</strong>를 눌러 권한을 허용하시면 됩니다.</p>
+      <p>터미널로 돌아오면 Claude Code의 인터랙티브 화면이 보입니다. <code>/exit</code>를 입력하거나 <span class="kbd">Ctrl</span> + <span class="kbd">C</span>를 두 번 눌러 종료합니다. <strong>로그인 정보는 저장되므로 다시 로그인하실 필요는 없습니다.</strong></p>
+    </div>
+  </div>
+
+  <div class="callout tip" style="margin-top:28px">
+    <span class="callout-title">🎉 여기까지 성공하셨다면.</span>
+    교육 실습에 필요한 <strong>기본 환경의 90%</strong>가 준비된 것입니다. 이제 마지막으로 MCP 두 개만 더 설정하면 완료입니다.
+  </div>
+</section>
+
+<!-- ==================================== -->
+<!-- PART 3                                -->
+<!-- ==================================== -->
+<section id="part3">
+  <div class="part-label">Part 3 · MCP Servers</div>
+  <h2><span class="num">03</span>기본 MCP 설정 — Playwright · Context7</h2>
+  <p class="lede">
+    <strong>MCP(Model Context Protocol)</strong>는 Claude가 외부 도구·서비스와 연결되어 일을 "직접 수행"할 수 있도록 해주는 <strong>표준 통신 규격</strong>입니다.
+    여기서는 본 교육에서 사용할 두 가지 기본 MCP를 설정합니다. 자세한 개념 설명은 <a href="#part4">Part 4 용어집</a>에서 다룹니다.
+  </p>
+
+  <!-- ───────── 3.1 Playwright ───────── -->
+  <h3>3.1 Playwright MCP — 웹 브라우저 자동 조작</h3>
+  <p>
+    <strong>Playwright</strong>는 원래 Microsoft가 만든 <strong>브라우저 자동화 도구</strong>입니다.
+    이 MCP를 연결하면 Claude가 <strong>실제 크롬 브라우저</strong>를 열어 웹 사이트 방문, 클릭, 양식 입력, 스크린샷 캡처 등을 <strong>사람처럼 수행</strong>할 수 있습니다.
+    예를 들어 "경쟁사 홈페이지에 접속해서 가격표를 표로 정리해줘" 같은 업무 위임이 가능해집니다.
+  </p>
+
+  <div class="step">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-mcp-playwright" />
+      <label class="step-title" for="chk-mcp-playwright">Playwright MCP 설치 — 한 줄 명령 <span class="tag tag-both">공통</span></label>
+    </div>
+    <div class="step-body">
+      <p>터미널 또는 PowerShell을 열고 아래 명령어를 입력합니다. Claude Code 인터랙티브 창 <strong>밖에서</strong> 실행하셔야 합니다.</p>
+      <div class="code" data-copyable>
+        <span class="cmd-line"><span class="shell">$ </span>claude mcp add playwright --scope user -- npx -y @playwright/mcp@latest</span>
+        <button class="code-copy">복사</button>
+      </div>
+      <div class="callout note">
+        <span class="callout-title">옵션의 의미.</span>
+        <code>--scope user</code>는 이 MCP를 <strong>모든 폴더에서 사용</strong>할 수 있게 전역 설정한다는 뜻입니다.
+        <code>-y</code>는 자동으로 "yes"를 눌러 설치를 진행합니다.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-mcp-playwright-verify" />
+      <label class="step-title" for="chk-mcp-playwright-verify">설치 확인 <span class="tag tag-both">공통</span></label>
+    </div>
+    <div class="step-body">
+      <div class="code" data-copyable>
+        <span class="cmd-line"><span class="shell">$ </span>claude mcp list</span>
+        <button class="code-copy">복사</button>
+      </div>
+      <p>출력 결과에 <code>playwright</code> 줄이 포함되고 상태가 <strong>connected</strong> 또는 <strong>ok</strong>로 표시되면 성공입니다. 최초 사용 시 브라우저 엔진이 자동 다운로드되므로 1~2분 소요될 수 있습니다.</p>
+    </div>
+  </div>
+
+  <!-- ───────── 3.2 Context7 ───────── -->
+  <h3>3.2 Context7 MCP — 최신 기술 문서 자동 참조</h3>
+  <p>
+    <strong>Context7</strong>은 <strong>각종 프로그래밍 라이브러리의 최신 공식 문서</strong>를 Claude에게 자동으로 공급해 주는 MCP입니다.
+    AI는 학습 시점 이후의 최신 정보를 모르지만, Context7을 연결하면 Claude가 <strong>"use context7"</strong>이라는 말 한마디만 붙여도 그때그때 공식 문서를 찾아 최신 코드 예제로 답하게 됩니다.
+    교육에서 다룰 여러 도구·프레임워크 실습 시 매우 유용합니다.
+  </p>
+
+  <div class="step">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-ctx7-key" />
+      <label class="step-title" for="chk-ctx7-key">Context7 무료 API 키 발급 <span class="tag tag-both">공통</span></label>
+    </div>
+    <div class="step-body">
+      <p>아래 사이트에 접속해 GitHub 또는 Google 계정으로 간단히 가입하시면 <strong>무료 API 키</strong>를 받으실 수 있습니다. 키가 없어도 동작하지만 있을 때 속도 제한이 훨씬 여유롭습니다.</p>
+      <p>👉 <a href="https://context7.com/dashboard" target="_blank" rel="noopener">https://context7.com/dashboard</a></p>
+      <p>발급받은 키는 아래 명령어에서 <code>YOUR_API_KEY</code> 자리에 붙여넣게 됩니다. <strong>키는 외부에 공개하지 마세요.</strong></p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-ctx7-install" />
+      <label class="step-title" for="chk-ctx7-install">Context7 MCP 설치 <span class="tag tag-both">공통</span></label>
+    </div>
+    <div class="step-body">
+      <p>아래 명령어의 <strong>YOUR_API_KEY 부분을 본인 키로 바꿔서</strong> 실행합니다.</p>
+      <div class="code" data-copyable>
+        <span class="cmd-line"><span class="shell">$ </span>claude mcp add context7 --scope user --transport http \</span>
+        <span class="cmd-line">    --header "CONTEXT7_API_KEY: YOUR_API_KEY" \</span>
+        <span class="cmd-line">    https://mcp.context7.com/mcp</span>
+        <button class="code-copy">복사</button>
+      </div>
+      <div class="callout tip">
+        <span class="callout-title">💡 API 키 없이 설치하려면?</span>
+        아래 명령어는 키 없이 바로 붙여 사용할 수 있습니다(요청량 제한이 있음).
+      </div>
+      <div class="code" data-copyable>
+        <span class="cmd-line"><span class="shell">$ </span>claude mcp add context7 --scope user --transport http https://mcp.context7.com/mcp</span>
+        <button class="code-copy">복사</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-ctx7-verify" />
+      <label class="step-title" for="chk-ctx7-verify">설치 확인 <span class="tag tag-both">공통</span></label>
+    </div>
+    <div class="step-body">
+      <div class="code" data-copyable>
+        <span class="cmd-line"><span class="shell">$ </span>claude mcp list</span>
+        <button class="code-copy">복사</button>
+      </div>
+      <p>목록에 <code>playwright</code>와 <code>context7</code> 두 개가 모두 있고, 각각 <strong>connected</strong> 상태라면 Part 3 완료입니다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================================== -->
+<!-- PART 4                                -->
+<!-- ==================================== -->
+<section id="part4">
+  <div class="part-label">Part 4 · Glossary</div>
+  <h2><span class="num">04</span>꼭 알고 오셔야 할 용어집</h2>
+  <p class="lede">
+    교육 현장에서 시간을 아끼기 위해, 자주 등장할 용어들을 미리 정리해 드립니다.
+    <strong>완벽히 이해하지 않으셔도 괜찮습니다.</strong>
+    각 용어의 "한 줄 정의"만이라도 머릿속에 넣고 오시면 실습 내용을 훨씬 수월하게 따라오실 수 있습니다.
+  </p>
+
+  <div class="glossary">
+
+    <div class="term">
+      <div class="term-name">
+        에이전트
+        <span class="en">Agent</span>
+      </div>
+      <div class="term-body">
+        <p><strong>"스스로 판단해서 일하는 AI"</strong>를 말합니다. 사용자가 목표만 알려 주면, 에이전트는 어떤 순서로, 어떤 도구를 써서, 어떻게 처리할지를 <strong>스스로 계획하고 실행</strong>합니다. 결과를 확인해 문제가 있으면 다시 시도하기도 합니다.</p>
+        <p>예) "이번 주 경쟁사 블로그 새 글을 모두 찾아 요약해줘"라고 하면, 에이전트는 검색 → 접속 → 읽기 → 요약 → 정리를 순서대로 알아서 수행합니다.</p>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">
+        LLM 채팅 vs LLM 에이전트
+        <span class="en">Chat vs Agent</span>
+      </div>
+      <div class="term-body">
+        <p>쉽게 비유하자면 이렇습니다.</p>
+        <ul class="plain">
+          <li><strong>LLM 채팅 서비스</strong> — "<em>똑똑한 조언자</em>." 질문하면 답해주지만, <strong>실제로 일은 하지 않습니다.</strong> 결과물을 얻으려면 사용자가 직접 그 답을 복사해 어딘가에 붙여넣어야 합니다. (예: ChatGPT 기본 채팅창, Claude 웹 채팅)</li>
+          <li><strong>LLM 에이전트</strong> — "<em>실제 일해주는 비서</em>." 컴퓨터의 파일을 직접 열고, 웹에 접속하고, 메일을 작성해 보내기까지 합니다. 사용자는 목표만 제시합니다. (예: Claude Code, Claude with MCP)</li>
+        </ul>
+        <p>본 교육의 핵심은 <strong>"조언받기"에서 "위임하기"로의 전환</strong>입니다.</p>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">
+        MCP
+        <span class="en">Model Context Protocol</span>
+      </div>
+      <div class="term-body">
+        <p>Claude 같은 AI 에이전트가 <strong>외부 도구·서비스와 대화하는 공통 규격</strong>입니다. 사람에게 비유하자면 <strong>"만능 콘센트 규격"</strong>과 같습니다.
+        MCP라는 표준이 있기에, 전혀 다른 회사가 만든 브라우저 자동화(Playwright), 최신 기술 문서(Context7), 메일(Gmail), 캘린더(Google Calendar) 같은 도구를 <strong>똑같은 방식으로 Claude에 꽂아 쓸 수</strong> 있습니다.</p>
+        <p>MCP 하나를 "서버(Server)"라고 부르며, 여러 MCP를 동시에 연결해 쓸 수 있습니다. 우리는 Part 3에서 Playwright, Context7 두 개를 연결했습니다.</p>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">
+        ACP
+        <span class="en">Agent Communication Protocol</span>
+      </div>
+      <div class="term-body">
+        <p><strong>서로 다른 AI 에이전트끼리 대화할 수 있게 해주는 표준</strong>입니다.
+        MCP와 한 글자 차이라 혼동되기 쉬운데, 역할은 다음처럼 명확히 나뉩니다.</p>
+        <ul class="plain">
+          <li><strong>MCP</strong> — "AI ↔ <u>도구</u>" 통신. (Claude가 브라우저를 조작하거나 메일을 보내는 경로)</li>
+          <li><strong>ACP</strong> — "AI ↔ <u>다른 AI</u>" 통신. (한 조직의 Claude 에이전트와, 다른 회사의 LangChain이나 CrewAI로 만든 에이전트가 서로 협력하는 경로)</li>
+        </ul>
+        <p>IBM의 BeeAI 프로젝트에서 처음 제안되었고, 현재는 Linux Foundation 산하에서 <strong>A2A(Agent-to-Agent Protocol)</strong>와 통합되는 과정에 있습니다. 아직 초기 단계의 표준이라 실무에서는 MCP만큼 널리 쓰이지는 않지만, 앞으로 <strong>여러 회사·플랫폼의 AI가 서로 협업하는 "에이전트 웹(Agentic Web)"</strong>이 본격화되면 핵심 인프라가 될 것으로 기대되는 규격입니다.</p>
+        <p>교육 실습에서는 MCP만 다루므로 <strong>"아, 서로 다른 AI끼리 통신하는 규격이 따로 있구나"</strong> 정도만 머리에 두시면 충분합니다.</p>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">
+        Skills
+        <span class="en">Skills</span>
+      </div>
+      <div class="term-body">
+        <p>Claude가 특정 작업을 할 때 <strong>자동으로 불러오는 "매뉴얼 폴더"</strong>입니다. 각 Skill은 <code>SKILL.md</code>라는 설명서 파일과 필요한 보조 파일들로 구성됩니다.</p>
+        <p>예를 들어 "이 데이터로 엑셀 보고서 만들어줘"라고 하면, Claude는 알아서 <strong>xlsx Skill</strong>을 꺼내 보고 그 안에 적힌 순서대로 작업합니다.
+        Skill의 설명(description)에 적힌 <strong>트리거 문구</strong>가 사용자 요청과 매칭되면 자동으로 발동됩니다.</p>
+        <p>회사 고유 업무 방식(예: "우리 회사 견적서 양식")을 Skill로 만들어 두면, 모든 직원이 같은 수준의 결과물을 받게 됩니다.</p>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">
+        메인 에이전트
+        <span class="en">Main Agent</span>
+      </div>
+      <div class="term-body">
+        <p>사용자와 <strong>직접 대화하는 "중심 AI"</strong>. 지시를 받아 전체 작업을 계획하고, 필요에 따라 서브 에이전트에게 일을 나눠 맡기고, 마지막에 결과를 종합해 사용자에게 보고하는 <strong>"현장 책임자"</strong>입니다.</p>
+        <p>본 교육의 실습 환경에서는 여러분이 Claude Code를 실행했을 때 처음 대화하는 그 AI가 메인 에이전트입니다.</p>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">
+        서브 에이전트
+        <span class="en">Sub-agent</span>
+      </div>
+      <div class="term-body">
+        <p>메인 에이전트가 특정 작업을 위해 <strong>별도로 호출하는 "전문가 AI"</strong>. 각 서브 에이전트는 자신만의 <strong>독립된 작업 공간(컨텍스트)</strong>을 가지고, 맡은 일을 처리한 뒤 <strong>결과 요약만</strong> 메인에게 돌려줍니다.</p>
+        <p>왜 나누는가?</p>
+        <ul class="plain">
+          <li><strong>집중력 보존.</strong> 메인 에이전트가 30개의 파일을 모두 읽으면 혼란스러워지지만, "코드 리뷰어" 서브 에이전트에게 맡기면 메인은 결론만 받습니다.</li>
+          <li><strong>전문성 분리.</strong> "세무 전문가", "디자인 전문가"처럼 역할별로 튜닝할 수 있습니다.</li>
+          <li><strong>권한 제한.</strong> 검토만 하는 서브 에이전트는 파일 쓰기 권한을 빼서 안전하게 운용할 수 있습니다.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">
+        에이전트 팀
+        <span class="en">Agent Team</span>
+      </div>
+      <div class="term-body">
+        <p>여러 AI 에이전트가 <strong>서로 대화하며 협업</strong>하는 방식. 서브 에이전트는 단방향(지시→결과)인 반면, 에이전트 팀은 <strong>작업 중간에 서로 의견을 나누고 조정</strong>합니다.</p>
+        <p>예를 들어 공공입찰 전략을 짤 때, "공무팀 담당", "재무 담당", "설계 담당" 에이전트들이 <strong>한 테이블에서 회의</strong>하면서 최종 제안을 함께 만들어 냅니다. 실제 회사 조직도를 그대로 옮겨 놓은 것과 같습니다.</p>
+        <p>강력하지만 토큰 소모가 크므로, <strong>교차 협의가 꼭 필요한 복잡한 업무</strong>에만 사용하는 것이 원칙입니다.</p>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">
+        오케스트레이션
+        <span class="en">Orchestration</span>
+      </div>
+      <div class="term-body">
+        <p>여러 에이전트·도구·단계를 <strong>지휘자처럼 조율</strong>하여 하나의 큰 업무를 완성시키는 것을 말합니다.
+        오케스트라의 지휘자가 현악기·관악기·타악기에게 <strong>"누가, 언제, 어떻게"</strong> 연주하라고 지시하는 장면을 떠올리시면 됩니다.</p>
+        <p>예를 들어 "이번 분기 공공입찰 대응 전략을 만들어줘"라는 지시를 받으면, 메인 에이전트는 다음과 같이 일을 쪼개어 배치합니다.</p>
+        <ul class="plain">
+          <li>리서치 서브 에이전트 → 나라장터에서 관련 공고·경쟁사 정보 수집</li>
+          <li>재무 서브 에이전트 → 원가·이익률 분석</li>
+          <li>문서 작성 서브 에이전트 → 제안서 초안 작성</li>
+          <li>검토 서브 에이전트 → 오탈자·논리 허점 점검</li>
+        </ul>
+        <p>이 네 명에게 <strong>어떤 순서로, 어떤 데이터를 넘기며, 언제 병렬로 돌릴지</strong>를 설계하고 실행하는 것이 오케스트레이션입니다.</p>
+        <p>전통적으로는 개발자가 코드로 이 흐름을 미리 짜 두어야 했지만, 최신 Claude Code는 <strong>사용자가 목표만 제시하면 Claude가 스스로 판단해 오케스트레이션을 수행</strong>합니다. 본 교육의 핵심이 바로 이 "AI에게 오케스트레이션을 맡기는 법"입니다.</p>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">
+        Claude 모델 라인업
+        <span class="en">Haiku / Sonnet / Opus</span>
+      </div>
+      <div class="term-body">
+        <p>Anthropic은 Claude를 세 가지 체급으로 나누어 제공합니다. 이름은 시(詩)에서 따왔으며, 순서대로 <strong>짧은 시(빠름)</strong> → <strong>긴 시(균형)</strong> → <strong>서사시(깊이)</strong>의 은유입니다.</p>
+
+        <div class="model-grid">
+          <div class="model-card">
+            <div class="tier">Light · Fast</div>
+            <div class="name">Claude Haiku 4.5</div>
+            <p>가장 빠르고 저렴한 모델. 단순 분류, 요약, 반복 작업에 적합합니다.</p>
+            <p class="use"><strong>쓰임</strong><br/>대량 이메일 분류, 간단한 검색, 서브 에이전트 "Explore"용.</p>
+          </div>
+          <div class="model-card">
+            <div class="tier">Balanced · Daily</div>
+            <div class="name">Claude Sonnet 4.6</div>
+            <p>속도와 지능의 균형점. <strong>대부분의 실무 업무</strong>에서 가장 가성비가 좋아 Claude Code의 일상 기본 모델로 쓰입니다.</p>
+            <p class="use"><strong>쓰임</strong><br/>코드 작성, 문서 초안, 일반 분석. 교육 실습의 중심 모델.</p>
+          </div>
+          <div class="model-card">
+            <div class="tier">Frontier · Deep</div>
+            <div class="name">Claude Opus 4.7</div>
+            <p>2026년 4월 출시된 <strong>현재 가장 똑똑한 모델</strong>. 복잡한 설계·전략·장시간 자율 실행이 필요한 최상위 난이도에 사용합니다.</p>
+            <p class="use"><strong>쓰임</strong><br/>복잡한 사업 전략, 어려운 디버깅, 아키텍처 설계.</p>
+          </div>
+        </div>
+
+        <p><strong>실무 팁.</strong> Claude Code는 기본적으로 Sonnet을 사용하도록 설정되어 있습니다. 어려운 문제를 만나면 <code>/model opus</code> 명령으로 Opus로 전환하고, 작업이 끝나면 다시 Sonnet으로 돌아오는 식으로 <strong>업무 난이도에 맞게 갈아타는 것</strong>이 비용·속도·품질의 최적점을 찾는 방법입니다.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="callout info" style="margin-top:36px">
+    <span class="callout-title">ℹ️ 용어가 많아 보여도.</span>
+    실제 실습에서는 <strong>메인 에이전트에게 자연어로 일을 시키는 것</strong>이 전부입니다. 서브 에이전트, Skills, MCP는 모두 <strong>Claude가 알아서 선택해 사용</strong>하므로, 여러분은 "무엇을, 어떻게, 언제까지"만 명확히 말하면 됩니다.
+  </div>
+</section>
+
+<!-- ==================================== -->
+<!-- PART 5                                -->
+<!-- ==================================== -->
+<section id="part5">
+  <div class="part-label">Part 5 · Final Checklist</div>
+  <h2><span class="num">05</span>최종 점검 체크리스트</h2>
+  <p class="lede">
+    모든 설치가 끝났다면 아래 체크리스트로 <strong>한 번에 확인</strong>해 주세요. 교육 시작 전에 모든 항목에 ✓가 찍혀 있으면 준비 완료입니다.
+    하나라도 문제가 있다면 <a href="#faq">부록 FAQ</a>를 먼저 확인해 보시고, 해결이 안 되면 교육 담당자에게 미리 알려 주시기 바랍니다.
+  </p>
+
+  <div class="final-check">
+    <h3>① 기본 도구 버전 확인</h3>
+    <p style="font-family:var(--sans);font-size:14px;color:var(--ink-soft);margin-bottom:18px">
+      터미널(또는 PowerShell)에 아래 명령어를 차례로 입력해 <strong>모두 버전이 출력</strong>되는지 확인합니다.
+    </p>
+
+    <div class="code" data-copyable data-os="mac">
+      <span class="cmd-line"><span class="shell">$ </span>node --version</span>
+      <span class="cmd-line"><span class="shell">$ </span>npm --version</span>
+      <span class="cmd-line"><span class="shell">$ </span>git --version</span>
+      <span class="cmd-line"><span class="shell">$ </span>python3 --version</span>
+      <span class="cmd-line"><span class="shell">$ </span>code --version</span>
+      <span class="cmd-line"><span class="shell">$ </span>claude --version</span>
+      <button class="code-copy">복사</button>
+    </div>
+    <div class="code" data-copyable data-os="win">
+      <span class="cmd-line"><span class="shell">PS&gt; </span>node --version</span>
+      <span class="cmd-line"><span class="shell">PS&gt; </span>npm --version</span>
+      <span class="cmd-line"><span class="shell">PS&gt; </span>git --version</span>
+      <span class="cmd-line"><span class="shell">PS&gt; </span>python --version</span>
+      <span class="cmd-line"><span class="shell">PS&gt; </span>code --version</span>
+      <span class="cmd-line"><span class="shell">PS&gt; </span>claude --version</span>
+      <button class="code-copy">복사</button>
+    </div>
+
+    <ul>
+      <li><input type="checkbox" id="fc-node"><label for="fc-node"><strong>Node.js</strong> <code>v22.x.x</code> 이상</label></li>
+      <li><input type="checkbox" id="fc-npm"><label for="fc-npm"><strong>npm</strong> <code>10.x.x</code> 이상</label></li>
+      <li><input type="checkbox" id="fc-git"><label for="fc-git"><strong>Git</strong> <code>2.xx.x</code></label></li>
+      <li><input type="checkbox" id="fc-py"><label for="fc-py"><strong>Python</strong> <code>3.13.x</code> 또는 <code>3.14.x</code></label></li>
+      <li><input type="checkbox" id="fc-code"><label for="fc-code"><strong>VS Code</strong> 버전 번호 출력</label></li>
+      <li><input type="checkbox" id="fc-claude"><label for="fc-claude"><strong>Claude Code</strong> <code>2.x.x</code> 출력</label></li>
+    </ul>
+  </div>
+
+  <div class="final-check">
+    <h3>② Claude Code 실행 확인</h3>
+    <ul>
+      <li><input type="checkbox" id="fc-signup"><label for="fc-signup">Claude.ai 로그인 가능 (Pro 또는 Max 구독 활성)</label></li>
+      <li><input type="checkbox" id="fc-auth"><label for="fc-auth">터미널에서 <code>claude</code> 실행 시 인터랙티브 화면이 뜨고 로그인 완료됨</label></li>
+      <li><input type="checkbox" id="fc-doctor"><label for="fc-doctor"><code>claude doctor</code> 실행 시 모든 항목이 <strong>OK</strong> 또는 ✓ 표시</label></li>
+    </ul>
+  </div>
+
+  <div class="final-check">
+    <h3>③ MCP 연결 확인</h3>
+    <p style="font-family:var(--sans);font-size:14px;color:var(--ink-soft);margin-bottom:18px">
+      아래 명령으로 두 MCP 모두 <strong>connected</strong> 상태인지 점검합니다.
+    </p>
+    <div class="code" data-copyable>
+      <span class="cmd-line"><span class="shell">$ </span>claude mcp list</span>
+      <button class="code-copy">복사</button>
+    </div>
+    <ul>
+      <li><input type="checkbox" id="fc-pw"><label for="fc-pw"><code>playwright</code> — connected</label></li>
+      <li><input type="checkbox" id="fc-ctx"><label for="fc-ctx"><code>context7</code> — connected</label></li>
+    </ul>
+  </div>
+
+  <div class="callout tip" style="margin-top:32px">
+    <span class="callout-title">🎓 모든 체크가 완료되면.</span>
+    교육 실습을 위한 환경이 완전히 준비된 것입니다. 교육 당일에는 바로 실무 위임 실습부터 시작할 수 있습니다. 고생하셨습니다.
+  </div>
+</section>
+
+<!-- ==================================== -->
+<!-- FAQ                                    -->
+<!-- ==================================== -->
+<section id="faq">
+  <div class="part-label">Appendix · Troubleshooting</div>
+  <h2><span class="num">06</span>자주 발생하는 오류 FAQ</h2>
+  <p class="lede">
+    설치 중 자주 만나는 문제들과 해결 방법입니다. 문제가 생기면 먼저 여기를 확인해 주세요.
+  </p>
+
+  <h3>Q1. <code>claude: command not found</code> 또는 "인식할 수 없는 명령어"</h3>
+  <p><strong>원인.</strong> 설치는 됐지만 터미널이 아직 새 실행 파일 경로(PATH)를 모르고 있습니다. 특히 <strong>Windows PowerShell</strong>에서 자주 발생합니다.</p>
+
+  <h4 style="margin-top:18px">1단계 — 가장 간단한 방법</h4>
+  <p>터미널(또는 PowerShell) 창을 <strong>모두 닫고 완전히 새로 열어 주세요.</strong> 대부분 이것으로 해결됩니다. 이래도 안 되면 <strong>컴퓨터를 재부팅</strong>하신 뒤 다시 시도합니다.</p>
+
+  <h4 style="margin-top:18px">2단계 — Windows: 설치 자체가 되었는지 먼저 확인 <span class="tag tag-win" style="font-size:10px">Windows</span></h4>
+  <p>PowerShell을 열고 아래 명령으로 <strong>실행 파일이 해당 위치에 존재하는지</strong>부터 확인합니다.</p>
+  <div class="code" data-copyable>
+    <span class="cmd-line"><span class="shell">PS&gt; </span>Test-Path "$env:USERPROFILE\.local\bin\claude.exe"</span>
+    <button class="code-copy">복사</button>
+  </div>
+  <ul class="plain">
+    <li>결과가 <code>True</code> → 설치는 됐지만 PATH 문제입니다. <strong>3단계</strong>로 진행하세요.</li>
+    <li>결과가 <code>False</code> → 설치 자체가 실패했습니다. Part 2.2의 설치 명령을 처음부터 다시 실행하십시오.</li>
+  </ul>
+
+  <h4 style="margin-top:18px">3단계 — Windows: PATH 수동 등록 (가장 확실) <span class="tag tag-win" style="font-size:10px">Windows</span></h4>
+  <p>아래 두 가지 방법 중 편한 쪽을 선택하시면 됩니다.</p>
+
+  <p style="margin-top:14px"><strong>방법 A. PowerShell 한 줄로 영구 등록 (권장)</strong></p>
+  <p>아래 명령 한 줄을 PowerShell에 붙여 넣으면 사용자 환경변수 Path에 Claude Code 설치 경로가 <strong>영구적으로</strong> 추가됩니다.</p>
+  <div class="code" data-copyable>
+    <span class="cmd-line"><span class="shell">PS&gt; </span>[Environment]::SetEnvironmentVariable("Path", [Environment]::GetEnvironmentVariable("Path","User") + ";$env:USERPROFILE\.local\bin", "User")</span>
+    <button class="code-copy">복사</button>
+  </div>
+  <p>실행 후 <strong>PowerShell 창을 완전히 닫고 새로 열어</strong> 주세요. 그런 다음 검증:</p>
+  <div class="code" data-copyable>
+    <span class="cmd-line"><span class="shell">PS&gt; </span>claude --version</span>
+    <button class="code-copy">복사</button>
+  </div>
+  <p>버전 번호가 표시되면 해결입니다.</p>
+
+  <p style="margin-top:20px"><strong>방법 B. Windows 설정 화면에서 수동으로</strong></p>
+  <p>명령어 입력이 부담스러우시면 GUI로 설정하실 수 있습니다.</p>
+  <ol style="font-family:var(--sans);font-size:14px;line-height:1.85;padding-left:22px;margin:8px 0 12px">
+    <li>시작 메뉴에서 <strong>"환경 변수"</strong>라고 검색 → <strong>"사용자 계정의 환경 변수 편집"</strong> 선택</li>
+    <li>위쪽 "사용자에 대한 사용자 변수" 목록에서 <strong>"Path"</strong>를 선택하고 <strong>"편집"</strong> 클릭</li>
+    <li>우측 <strong>"새로 만들기"</strong> 클릭 후 아래 경로를 정확히 입력 → <strong>"확인"</strong>
+      <div class="code" data-copyable style="margin-top:8px">
+        <span class="cmd-line">%USERPROFILE%\.local\bin</span>
+        <button class="code-copy">복사</button>
+      </div>
+    </li>
+    <li>모든 창에서 <strong>"확인"</strong>을 누른 뒤 <strong>PowerShell을 완전히 닫고 새로 열기</strong></li>
+    <li><code>claude --version</code> 으로 확인</li>
+  </ol>
+
+  <h4 style="margin-top:18px">3단계 — macOS: 쉘 프로파일에 경로 추가 <span class="tag tag-mac" style="font-size:10px">macOS</span></h4>
+  <p>macOS에서 재시작해도 인식이 안 된다면, 기본 쉘(zsh) 프로파일에 Claude 설치 경로가 빠져 있을 수 있습니다. 아래 한 줄을 터미널에 붙여 넣으면 됩니다.</p>
+  <div class="code" data-copyable>
+    <span class="cmd-line"><span class="shell">$ </span>echo 'export PATH="$HOME/.local/bin:$PATH"' &gt;&gt; ~/.zshrc</span>
+    <span class="cmd-line"><span class="shell">$ </span>source ~/.zshrc</span>
+    <span class="cmd-line"><span class="shell">$ </span>claude --version</span>
+    <button class="code-copy">복사</button>
+  </div>
+  <p>버전이 표시되면 해결입니다. (bash를 쓰신다면 <code>~/.zshrc</code> 대신 <code>~/.bash_profile</code>에 추가하세요.)</p>
+
+  <div class="callout warn" style="margin-top:20px">
+    <span class="callout-title">⚠️ 그래도 안 될 때.</span>
+    PowerShell의 실행 정책이 막혀 있을 수 있습니다. 관리자 권한 PowerShell을 새로 열고
+    <code>Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser</code>를 한 번 실행한 뒤
+    <code>Y</code>로 허용하신 다음 다시 시도해 주세요.
+  </div>
+
+  <h3>Q2. Windows에서 <code>'irm' is not recognized as an internal or external command</code></h3>
+  <p><strong>원인.</strong> 현재 창이 PowerShell이 아닌 CMD(명령 프롬프트)입니다.</p>
+  <p><strong>해결.</strong> 시작 메뉴에서 <strong>"PowerShell"</strong>을 검색해 새로 실행하세요. 프롬프트 맨 앞에 <strong>PS</strong>가 붙어 있어야 정상입니다.</p>
+
+  <h3>Q3. Windows에서 Python 실행 시 Microsoft Store가 열림</h3>
+  <p><strong>원인.</strong> Python 설치 시 <strong>"Add python.exe to PATH"</strong> 체크박스를 놓쳤습니다.</p>
+  <p><strong>해결.</strong> Python 설치 프로그램을 다시 실행해 "Modify" → 다음 화면에서 <strong>"Add Python to environment variables"</strong>에 체크한 뒤 재설치합니다. 그래도 안 되면 설치를 "Uninstall"하고 처음부터 다시 설치하시는 것이 가장 확실합니다.</p>
+
+  <h3>Q4. <code>claude mcp list</code>를 해도 playwright/context7이 보이지 않음</h3>
+  <p><strong>원인.</strong> <code>--scope user</code> 옵션 없이 설치되어 해당 폴더에서만 등록됐거나, 설치 명령이 실패했습니다.</p>
+  <p><strong>해결.</strong> 같은 폴더에서 <code>claude mcp list</code>로 확인하고, 없으면 Part 3의 설치 명령을 다시 실행하세요. 반드시 <code>--scope user</code>가 포함되어야 모든 폴더에서 쓸 수 있습니다.</p>
+
+  <h3>Q5. Playwright MCP 사용 시 "브라우저를 설치해야 한다"는 메시지</h3>
+  <p><strong>해결.</strong> Claude Code 밖 터미널에서 아래 명령으로 브라우저를 수동 설치합니다. (약 500MB 다운로드)</p>
+  <div class="code" data-copyable>
+    <span class="cmd-line"><span class="shell">$ </span>npx playwright install chromium</span>
+    <button class="code-copy">복사</button>
+  </div>
+
+  <h3>Q6. macOS에서 "개발자를 확인할 수 없어 열 수 없습니다"</h3>
+  <p><strong>해결.</strong> 시스템 설정 → 개인정보 보호 및 보안 → 화면 하단 <strong>"확인 없이 열기"</strong>를 클릭하면 해당 앱이 실행 허용됩니다.</p>
+
+  <h3>Q7. 설치는 됐는데 Claude에 로그인하니 "구독이 필요합니다"라는 메시지</h3>
+  <p><strong>원인.</strong> <strong>무료 계정</strong>으로 Claude Code를 사용하려 했습니다.</p>
+  <p><strong>해결.</strong> claude.ai에 접속해 <strong>Pro 이상 요금제</strong>를 구독한 뒤, 터미널에서 <code>claude</code>를 다시 실행해 재로그인하시면 됩니다.</p>
+
+  <h3>Q8. 회사 네트워크에서 설치가 자꾸 실패합니다</h3>
+  <p><strong>원인.</strong> 회사 방화벽·프록시가 외부 다운로드를 차단하고 있을 수 있습니다.</p>
+  <p><strong>해결.</strong> IT 담당자에게 다음 도메인으로의 접근 허용을 요청하세요:
+  <code>claude.ai</code>, <code>api.anthropic.com</code>, <code>nodejs.org</code>, <code>registry.npmjs.org</code>, <code>github.com</code>, <code>python.org</code>, <code>mcp.context7.com</code>.
+  개인 핫스팟(휴대폰 테더링)으로 일단 설치하는 것도 방법입니다.</p>
+
+  <div class="callout note" style="margin-top:32px">
+    <span class="callout-title">그래도 해결되지 않는다면.</span>
+    교육 담당자에게 <strong>오류 메시지 전문을 스크린샷</strong>으로 찍어 보내 주세요. 교육 시작 최소 <strong>24시간 전</strong>까지 문의해 주시면 당일에 다 함께 해결할 수 있습니다.
+  </div>
+</section>
+
+</main>
+
+<footer>
+  Claude Code 사전 설치 교안 · 2026년 4월 기준 최신 정보 반영<br/>
+  본 교안의 명령어 및 링크는 Anthropic 공식 문서(<a href="https://code.claude.com/docs/en/setup" target="_blank" rel="noopener">code.claude.com/docs</a>)를 기준으로 작성되었습니다.
+</footer>
+
+<!-- ==================================== -->
+<!-- JavaScript                             -->
+<!-- ==================================== -->
+<script>
+(function(){
+  'use strict';
+
+  // ── In-page hash link interceptor ─────
+  // When this HTML is viewed inside an iframe/app viewer (e.g. Claude app preview),
+  // clicking a "#section" link causes the TOP frame to navigate to
+  // {viewer-origin}/#section instead of scrolling within the document.
+  // We hijack those clicks and scroll directly so it works in every environment.
+  document.addEventListener('click', function(e){
+    var a = e.target.closest && e.target.closest('a[href]');
+    if(!a) return;
+    var href = a.getAttribute('href') || '';
+    if(href.charAt(0) !== '#' || href.length < 2) return;
+    var target = document.getElementById(href.slice(1));
+    if(!target) return;
+    e.preventDefault();
+    e.stopPropagation();
+    target.scrollIntoView({behavior:'smooth', block:'start'});
+    try{ history.replaceState(null, '', href); }catch(_){}
+  }, true); // use capture phase so we run before any default handling
+
+  // ── OS switch ─────────────────────────
+  var body = document.body;
+  var tabs = document.querySelectorAll('.os-tab');
+
+  function setOS(os){
+    body.setAttribute('data-active-os', os);
+    tabs.forEach(function(t){
+      t.setAttribute('aria-selected', t.getAttribute('data-os-tab') === os ? 'true' : 'false');
+    });
+    try{ localStorage.setItem('ccsg.os', os); }catch(e){}
+  }
+
+  // Restore saved OS, else auto-detect
+  var savedOS = null;
+  try{ savedOS = localStorage.getItem('ccsg.os'); }catch(e){}
+  if(!savedOS){
+    savedOS = /Win/i.test(navigator.platform || '') ? 'win' : 'mac';
+  }
+  setOS(savedOS);
+
+  tabs.forEach(function(t){
+    t.addEventListener('click', function(){
+      setOS(t.getAttribute('data-os-tab'));
+    });
+  });
+
+  // ── Copy buttons ──────────────────────
+  document.querySelectorAll('.code[data-copyable]').forEach(function(block){
+    var btn = block.querySelector('.code-copy');
+    if(!btn) return;
+    btn.addEventListener('click', function(){
+      var text = '';
+      block.querySelectorAll('.cmd-line').forEach(function(line){
+        var clone = line.cloneNode(true);
+        var shell = clone.querySelector('.shell');
+        if(shell) shell.remove();
+        text += clone.textContent.replace(/\s+$/,'') + '\n';
+      });
+      text = text.trim();
+      var done = function(){
+        var old = btn.textContent;
+        btn.textContent = '복사됨 ✓';
+        btn.classList.add('copied');
+        setTimeout(function(){
+          btn.textContent = old;
+          btn.classList.remove('copied');
+        }, 1600);
+      };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done).catch(function(){
+          fallbackCopy(text); done();
+        });
+      } else {
+        fallbackCopy(text); done();
+      }
+    });
+  });
+
+  function fallbackCopy(text){
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly','');
+    ta.style.position = 'absolute';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try{ document.execCommand('copy'); }catch(e){}
+    document.body.removeChild(ta);
+  }
+
+  // ── Checkbox progress & persistence ───
+  var allChecks = document.querySelectorAll('input[type="checkbox"]');
+  var totalEl = document.getElementById('progress-total');
+  var countEl = document.getElementById('progress-count');
+  totalEl.textContent = allChecks.length;
+
+  function updateProgress(){
+    var done = 0;
+    allChecks.forEach(function(c){ if(c.checked) done++; });
+    countEl.textContent = done;
+  }
+
+  // Load saved state
+  allChecks.forEach(function(c){
+    if(!c.id) return;
+    try{
+      if(localStorage.getItem('ccsg.chk.' + c.id) === '1') c.checked = true;
+    }catch(e){}
+    c.addEventListener('change', function(){
+      try{
+        if(c.checked) localStorage.setItem('ccsg.chk.' + c.id, '1');
+        else localStorage.removeItem('ccsg.chk.' + c.id);
+      }catch(e){}
+      updateProgress();
+    });
+  });
+  updateProgress();
+
+})();
+</script>
+
+</body>
+</html>
