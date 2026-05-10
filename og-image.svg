@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <radialGradient id="g1" cx="10%" cy="-10%" r="60%">
+      <stop offset="0%" stop-color="#a63a25" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="#f4efe6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="g2" cx="110%" cy="110%" r="60%">
+      <stop offset="0%" stop-color="#1f1d28" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#f4efe6" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#f4efe6"/>
+  <rect width="1200" height="630" fill="url(#g1)"/>
+  <rect width="1200" height="630" fill="url(#g2)"/>
+
+  <!-- Left accent bar -->
+  <rect x="0" y="0" width="6" height="630" fill="#a63a25" opacity="0.6"/>
+
+  <!-- Eyebrow -->
+  <text
+    x="600" y="196"
+    font-family="Georgia, 'Noto Serif KR', serif"
+    font-size="18"
+    fill="#a63a25"
+    letter-spacing="4"
+    text-anchor="middle"
+    font-weight="400">AI STUDY · PRE-TRAINING HANDBOOK · 2026</text>
+
+  <!-- Title line 1 -->
+  <text
+    x="600" y="290"
+    font-family="Georgia, 'Noto Serif KR', serif"
+    font-size="72"
+    fill="#1c1d24"
+    letter-spacing="-1"
+    text-anchor="middle"
+    font-weight="700">AI 실습을 위한</text>
+
+  <!-- Ochre underline rect behind title line 2 -->
+  <rect x="232" y="348" width="738" height="18" fill="#f2cf66" opacity="0.7" rx="2"/>
+
+  <!-- Title line 2 -->
+  <text
+    x="600" y="370"
+    font-family="Georgia, 'Noto Serif KR', serif"
+    font-size="72"
+    fill="#1c1d24"
+    letter-spacing="-1"
+    text-anchor="middle"
+    font-weight="700">필수 사전 설치 교안</text>
+
+  <!-- Divider -->
+  <rect x="560" y="408" width="80" height="4" rx="2" fill="#a63a25"/>
+  <rect x="600" y="408" width="40" height="4" rx="2" fill="#f2cf66"/>
+
+  <!-- Tool chips row -->
+  <g font-family="Georgia, sans-serif" font-size="14" fill="#3c3e4a">
+    <!-- Claude Code chip -->
+    <rect x="230" y="444" width="120" height="30" rx="15" fill="#fff" stroke="#c9bfa9" stroke-width="1"/>
+    <circle cx="250" cy="459" r="5" fill="#a63a25"/>
+    <text x="262" y="464" font-size="13">Claude Code</text>
+
+    <!-- ChatGPT chip -->
+    <rect x="362" y="444" width="98" height="30" rx="15" fill="#fff" stroke="#c9bfa9" stroke-width="1"/>
+    <circle cx="382" cy="459" r="5" fill="#10a37f"/>
+    <text x="394" y="464" font-size="13">ChatGPT</text>
+
+    <!-- Gemini chip -->
+    <rect x="472" y="444" width="90" height="30" rx="15" fill="#fff" stroke="#c9bfa9" stroke-width="1"/>
+    <circle cx="492" cy="459" r="5" fill="#4285f4"/>
+    <text x="504" y="464" font-size="13">Gemini</text>
+
+    <!-- NotebookLM chip -->
+    <rect x="574" y="444" width="118" height="30" rx="15" fill="#fff" stroke="#c9bfa9" stroke-width="1"/>
+    <circle cx="594" cy="459" r="5" fill="#fbbc04"/>
+    <text x="606" y="464" font-size="13">NotebookLM</text>
+
+    <!-- GitHub chip -->
+    <rect x="704" y="444" width="90" height="30" rx="15" fill="#fff" stroke="#c9bfa9" stroke-width="1"/>
+    <circle cx="724" cy="459" r="5" fill="#24292e"/>
+    <text x="736" y="464" font-size="13">GitHub</text>
+
+    <!-- Vercel chip -->
+    <rect x="806" y="444" width="84" height="30" rx="15" fill="#fff" stroke="#c9bfa9" stroke-width="1"/>
+    <circle cx="826" cy="459" r="5" fill="#000"/>
+    <text x="838" y="464" font-size="13">Vercel</text>
+  </g>
+
+  <!-- Bottom note -->
+  <text
+    x="600" y="536"
+    font-family="Georgia, serif"
+    font-size="15"
+    fill="#6a6b76"
+    text-anchor="middle"
+    letter-spacing="1">macOS · Windows · 완전 초보 ~ 중급 · 예상 소요 90–120분</text>
+</svg>
