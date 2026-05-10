@@ -267,6 +267,8 @@ ul.step-list li input[type="checkbox"]{flex-shrink:0; margin-top:3px}
 .chip-gemini   .chip-dot{background:#4285f4}
 .chip-nlm      .chip-dot{background:#fbbc04}
 .chip-ag       .chip-dot{background:#34a853}
+.chip-github   .chip-dot{background:#24292e}
+.chip-vercel   .chip-dot{background:#000000}
 .cover-divider{
   width:40px; height:3px;
   background:linear-gradient(90deg,var(--accent),var(--mark));
@@ -1297,6 +1299,8 @@ ul.plain li{margin:4px 0}
       <a href="#part-gemini">Gemini</a>
       <a href="#part-notebooklm">NotebookLM</a>
       <a href="#part-antigravity">Antigravity</a>
+      <a href="#part-github">GitHub</a>
+      <a href="#part-vercel">Vercel</a>
       <a href="#part-examples">예시 영상</a>
       <a href="#part4">용어집</a>
       <a href="#part5">최종 점검</a>
@@ -1338,6 +1342,8 @@ ul.plain li{margin:4px 0}
     <span class="cover-tool-chip chip-gemini"><span class="chip-dot"></span>Google Gemini</span>
     <span class="cover-tool-chip chip-nlm"><span class="chip-dot"></span>NotebookLM</span>
     <span class="cover-tool-chip chip-ag"><span class="chip-dot"></span>Antigravity</span>
+    <span class="cover-tool-chip chip-github"><span class="chip-dot"></span>GitHub</span>
+    <span class="cover-tool-chip chip-vercel"><span class="chip-dot"></span>Vercel</span>
   </div>
   <div class="cover-meta">
     <span>예상 소요 <b>90–120분</b></span>
@@ -2733,6 +2739,231 @@ ul.plain li{margin:4px 0}
     <span class="callout-title">Vibe Coding 이란?</span>
     코드를 직접 작성하는 대신, AI와 <strong>대화하며 앱을 만들어 나가는 방식</strong>을 'Vibe Coding'이라고 합니다.
     Antigravity는 이 방식의 대표적인 도구로, 프로그래밍 경험 없이도 실무에 바로 쓸 수 있는 앱을 수분 내에 완성할 수 있습니다.
+  </div>
+</section>
+
+<!-- ==================================== -->
+<!-- PART GITHUB                           -->
+<!-- ==================================== -->
+<section id="part-github">
+  <div class="part-label">Part 9 · GitHub</div>
+  <h2><span class="num">09</span>GitHub 가입 및 CLI 설치</h2>
+  <p class="lede">
+    <strong>GitHub</strong>는 전 세계 개발자가 코드를 저장하고 공유하는 플랫폼입니다.
+    Claude Code로 만든 결과물을 저장하거나, 다른 사람의 프로젝트를 가져올 때 사용합니다.
+    <strong>GitHub CLI</strong>는 터미널에서 GitHub를 바로 조작할 수 있게 해주는 도구입니다.
+  </p>
+
+  <!-- ───────── 9.1 계정 가입 ───────── -->
+  <h3>9.1 GitHub 계정 가입</h3>
+
+  <div class="step">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-github-signup" />
+      <label class="step-title" for="chk-github-signup">GitHub 계정 만들기 <span class="tag tag-both">공통</span></label>
+    </div>
+    <div class="step-body">
+      <p>아래 사이트에 접속하여 이메일로 회원가입합니다. 이미 계정이 있다면 이 단계는 건너뜁니다.</p>
+      <p>👉 <a href="https://github.com/signup" target="_blank" rel="noopener">https://github.com/signup</a></p>
+      <ol>
+        <li>이메일 주소 입력 → 비밀번호 설정 → 사용자 이름(닉네임) 입력</li>
+        <li>이메일로 발송된 <strong>인증 코드(8자리)</strong>를 입력하여 이메일 인증 완료</li>
+        <li>무료 플랜(Free)으로 시작 — 교육 실습에는 무료 계정으로 충분합니다</li>
+      </ol>
+      <div class="callout tip">
+        <span class="callout-title">사용자 이름 팁.</span>
+        GitHub 사용자 이름은 공개되며 URL에 포함됩니다. 실명 기반(<code>hong-gildong</code>) 또는 업무용 아이디로 설정하는 것을 권장합니다.
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────── 9.2 CLI 설치 ───────── -->
+  <h3>9.2 GitHub CLI(gh) 설치</h3>
+  <p>
+    <strong>GitHub CLI(gh)</strong>는 터미널에서 저장소 생성, 코드 업로드, 풀 리퀘스트 등을 명령어로 처리할 수 있게 해줍니다.
+    Claude Code와 함께 사용하면 AI가 코드를 작성하고 GitHub에 바로 올리는 것이 가능합니다.
+  </p>
+
+  <div class="step mac-only">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-gh-mac" />
+      <label class="step-title" for="chk-gh-mac">GitHub CLI 설치 <span class="tag tag-mac">macOS</span></label>
+    </div>
+    <div class="step-body">
+      <p>터미널을 열고 아래 명령어를 실행합니다.</p>
+      <div class="code" data-copyable>
+        <span class="cmd-line"><span class="shell">$ </span>brew install gh</span>
+        <button class="code-copy">복사</button>
+      </div>
+      <div class="callout note">
+        <span class="callout-title">Homebrew가 없다면?</span>
+        Part 1에서 Homebrew를 설치했다면 그대로 실행하시면 됩니다. 혹시 건너뛰셨다면 먼저 Part 1 — Homebrew 설치 단계로 돌아가세요.
+      </div>
+    </div>
+  </div>
+
+  <div class="step win-only">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-gh-win" />
+      <label class="step-title" for="chk-gh-win">GitHub CLI 설치 <span class="tag tag-win">Windows</span></label>
+    </div>
+    <div class="step-body">
+      <p>PowerShell(관리자)을 열고 아래 명령어를 실행합니다.</p>
+      <div class="code" data-copyable>
+        <span class="cmd-line"><span class="shell">PS&gt; </span>winget install --id GitHub.cli</span>
+        <button class="code-copy">복사</button>
+      </div>
+      <p>설치 완료 후 PowerShell을 <strong>새로 열어야</strong> <code>gh</code> 명령어를 인식합니다.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-gh-verify" />
+      <label class="step-title" for="chk-gh-verify">설치 확인 <span class="tag tag-both">공통</span></label>
+    </div>
+    <div class="step-body">
+      <div class="code" data-copyable>
+        <span class="cmd-line"><span class="shell">$ </span>gh --version</span>
+        <button class="code-copy">복사</button>
+      </div>
+      <p><code>gh version 2.x.x</code> 형태로 버전이 출력되면 성공입니다.</p>
+    </div>
+  </div>
+
+  <!-- ───────── 9.3 로그인 ───────── -->
+  <h3>9.3 GitHub CLI 로그인</h3>
+
+  <div class="step">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-gh-login" />
+      <label class="step-title" for="chk-gh-login">GitHub 계정 인증 <span class="tag tag-both">공통</span></label>
+    </div>
+    <div class="step-body">
+      <div class="code" data-copyable>
+        <span class="cmd-line"><span class="shell">$ </span>gh auth login</span>
+        <button class="code-copy">복사</button>
+      </div>
+      <ol>
+        <li>인증 방식 선택 → <strong>GitHub.com</strong> 선택</li>
+        <li>프로토콜 선택 → <strong>HTTPS</strong> 선택</li>
+        <li>브라우저 인증 → <strong>Login with a web browser</strong> 선택</li>
+        <li>터미널에 표시된 <strong>8자리 코드</strong>를 복사 후 브라우저에서 입력하여 인증 완료</li>
+      </ol>
+      <div class="callout tip">
+        <span class="callout-title">로그인 확인.</span>
+        <code>gh auth status</code>를 입력했을 때 <strong>Logged in to github.com</strong>이 표시되면 완료입니다.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================================== -->
+<!-- PART VERCEL                           -->
+<!-- ==================================== -->
+<section id="part-vercel">
+  <div class="part-label">Part 10 · Vercel</div>
+  <h2><span class="num">10</span>Vercel 가입 및 MCP 설치</h2>
+  <p class="lede">
+    <strong>Vercel</strong>은 웹사이트·앱을 전 세계 서버에 즉시 배포할 수 있는 플랫폼입니다.
+    Claude Code로 만든 웹 프로젝트를 터미널 명령어 한 줄로 인터넷에 공개할 수 있습니다.
+    <strong>Vercel MCP</strong>를 Claude Code에 연결하면 AI가 배포 상태 확인, 도메인 설정 등을 직접 수행합니다.
+  </p>
+
+  <!-- ───────── 10.1 계정 가입 ───────── -->
+  <h3>10.1 Vercel 계정 가입</h3>
+
+  <div class="step">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-vercel-signup" />
+      <label class="step-title" for="chk-vercel-signup">Vercel 계정 만들기 <span class="tag tag-both">공통</span></label>
+    </div>
+    <div class="step-body">
+      <p>아래 사이트에 접속하여 <strong>GitHub 계정으로 가입</strong>하는 것을 권장합니다. (GitHub 계정이 있다면 한 번의 클릭으로 가입 완료)</p>
+      <p>👉 <a href="https://vercel.com/signup" target="_blank" rel="noopener">https://vercel.com/signup</a></p>
+      <ol>
+        <li><strong>"Continue with GitHub"</strong> 클릭 → GitHub 계정 로그인</li>
+        <li>Vercel이 GitHub 저장소에 접근하도록 권한 허용</li>
+        <li>무료 <strong>Hobby 플랜</strong>으로 시작 — 개인 프로젝트 배포에 충분합니다</li>
+      </ol>
+      <div class="callout note">
+        <span class="callout-title">이메일로도 가입 가능.</span>
+        GitHub 계정이 없다면 이메일로 가입할 수 있지만, GitHub와 연동해 두면 저장소와 배포가 자동으로 연결되어 훨씬 편리합니다.
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────── 10.2 CLI 설치 ───────── -->
+  <h3>10.2 Vercel CLI 설치</h3>
+
+  <div class="step">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-vercel-cli" />
+      <label class="step-title" for="chk-vercel-cli">Vercel CLI 설치 <span class="tag tag-both">공통</span></label>
+    </div>
+    <div class="step-body">
+      <p>터미널 또는 PowerShell을 열고 아래 명령어를 실행합니다.</p>
+      <div class="code" data-copyable>
+        <span class="cmd-line"><span class="shell">$ </span>npm install -g vercel</span>
+        <button class="code-copy">복사</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-vercel-login" />
+      <label class="step-title" for="chk-vercel-login">Vercel CLI 로그인 <span class="tag tag-both">공통</span></label>
+    </div>
+    <div class="step-body">
+      <div class="code" data-copyable>
+        <span class="cmd-line"><span class="shell">$ </span>vercel login</span>
+        <button class="code-copy">복사</button>
+      </div>
+      <p>브라우저가 자동으로 열리며 Vercel 계정 인증이 진행됩니다. 인증 완료 후 터미널에 <strong>Logged in</strong> 메시지가 표시되면 성공입니다.</p>
+    </div>
+  </div>
+
+  <!-- ───────── 10.3 MCP 설치 ───────── -->
+  <h3>10.3 Vercel MCP — Claude Code에 연결</h3>
+  <p>
+    Vercel MCP를 Claude Code에 연결하면 AI가 <strong>배포 상태 조회, 프로젝트 관리, 도메인 확인</strong> 등을 터미널 명령 없이 직접 처리할 수 있습니다.
+  </p>
+
+  <div class="step">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-vercel-mcp" />
+      <label class="step-title" for="chk-vercel-mcp">Vercel MCP 설치 <span class="tag tag-both">공통</span></label>
+    </div>
+    <div class="step-body">
+      <p>터미널을 열고 아래 명령어를 실행합니다. Claude Code 인터랙티브 창 <strong>밖에서</strong> 실행해야 합니다.</p>
+      <div class="code" data-copyable>
+        <span class="cmd-line"><span class="shell">$ </span>claude mcp add vercel --scope user</span>
+        <button class="code-copy">복사</button>
+      </div>
+      <div class="callout note">
+        <span class="callout-title">옵션의 의미.</span>
+        <code>--scope user</code>는 이 MCP를 <strong>모든 프로젝트에서 전역으로 사용</strong>할 수 있게 설정합니다.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head">
+      <input type="checkbox" class="step-check" id="chk-vercel-mcp-verify" />
+      <label class="step-title" for="chk-vercel-mcp-verify">설치 확인 <span class="tag tag-both">공통</span></label>
+    </div>
+    <div class="step-body">
+      <div class="code" data-copyable>
+        <span class="cmd-line"><span class="shell">$ </span>claude mcp list</span>
+        <button class="code-copy">복사</button>
+      </div>
+      <p>목록에 <code>vercel</code>이 포함되고 <strong>connected</strong> 상태라면 Part 10 완료입니다.</p>
+      <div class="callout tip">
+        <span class="callout-title">첫 배포 해보기.</span>
+        Claude Code에서 <code>vercel --prod</code>를 실행하거나, AI에게 <strong>"지금 프로젝트를 Vercel에 배포해줘"</strong>라고 말해보세요.
+      </div>
+    </div>
   </div>
 </section>
 
