@@ -70,27 +70,14 @@ body::before{
 .topbar-inner{
   max-width:1040px; margin:0 auto;
   padding:10px 24px;
-  display:flex; align-items:center; gap:20px;
+  display:flex; align-items:center; justify-content:space-between;
   font-family:var(--sans);
   font-size:13px;
 }
 .topbar-title{
   font-weight:700; letter-spacing:.02em;
-  flex:0 0 auto;
   color:var(--ink);
 }
-.topbar-nav{
-  display:flex; gap:16px; flex:1 1 auto; overflow-x:auto;
-}
-.topbar-nav a{
-  color:var(--ink-soft);
-  text-decoration:none;
-  white-space:nowrap;
-  padding:4px 2px;
-  border-bottom:1px solid transparent;
-  transition:border-color .15s;
-}
-.topbar-nav a:hover{border-bottom-color:var(--accent)}
 .progress-chip{
   font-family:var(--mono);
   font-size:12px;
@@ -99,9 +86,33 @@ body::before{
   border-radius:999px;
   background:#fff;
   color:var(--ink-soft);
-  flex:0 0 auto;
 }
 .progress-chip b{color:var(--accent); font-weight:700}
+
+/* ───────────────────────── Home FAB ───────────────────────── */
+.home-fab{
+  position:fixed;
+  bottom:28px; right:28px;
+  z-index:100;
+  width:52px; height:52px;
+  border-radius:50%;
+  background:var(--accent);
+  color:#fff;
+  border:none;
+  cursor:pointer;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  gap:2px;
+  box-shadow:0 4px 16px rgba(60,20,10,.28);
+  transition:background .18s, transform .18s, opacity .18s;
+  text-decoration:none;
+  opacity:0;
+  pointer-events:none;
+}
+.home-fab.visible{opacity:1; pointer-events:auto}
+.home-fab:hover{background:var(--accent-deep); transform:scale(1.08)}
+.home-fab svg{width:20px; height:20px; fill:currentColor}
+.home-fab span{font-family:var(--sans); font-size:9px; font-weight:700; letter-spacing:.04em; line-height:1}
 
 /* ───────────────────────── Layout ───────────────────────── */
 main{
@@ -1289,25 +1300,18 @@ ul.plain li{margin:4px 0}
 <div class="topbar">
   <div class="topbar-inner">
     <div class="topbar-title">AI 실습 필수 사전 설치 교안</div>
-    <nav class="topbar-nav" aria-label="섹션 이동">
-      <a href="#part0">시작 전</a>
-      <a href="#part1">사전 설치</a>
-      <a href="#part2">Claude Code</a>
-      <a href="#part3">MCP 설정</a>
-      <a href="#part-chatgpt">ChatGPT</a>
-      <a href="#part-codex">Codex CLI</a>
-      <a href="#part-gemini">Gemini</a>
-      <a href="#part-notebooklm">NotebookLM</a>
-      <a href="#part-antigravity">Antigravity</a>
-      <a href="#part-github">GitHub</a>
-      <a href="#part-vercel">Vercel</a>
-      <a href="#part4">용어집</a>
-      <a href="#part5">최종 점검</a>
-      <a href="#faq">FAQ</a>
-    </nav>
     <div class="progress-chip">진행 <b id="progress-count">0</b>/<span id="progress-total">0</span></div>
   </div>
 </div>
+
+<!-- Home FAB ────────────────────────────── -->
+<a class="home-fab" href="#toc" aria-label="목차로 이동">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5z"/>
+    <path d="M9 21V13h6v8"/>
+  </svg>
+  <span>목차</span>
+</a>
 
 <main>
 
@@ -1558,7 +1562,7 @@ ul.plain li{margin:4px 0}
 </div>
 
 <!-- TOC ────────────────────────────── -->
-<div class="toc">
+<div class="toc" id="toc">
   <h4>이 문서의 구성</h4>
   <ol>
     <li><a href="#part0">시작하기 전 — 준비물과 용어 한 조각</a></li>
@@ -3533,6 +3537,22 @@ ul.plain li{margin:4px 0}
     });
   });
   updateProgress();
+
+  // ── Home FAB visibility ────────────────
+  var fab = document.querySelector('.home-fab');
+  var toc = document.getElementById('toc');
+  if(fab && toc){
+    function onScroll(){
+      var tocBottom = toc.getBoundingClientRect().bottom;
+      if(tocBottom < 0){
+        fab.classList.add('visible');
+      } else {
+        fab.classList.remove('visible');
+      }
+    }
+    window.addEventListener('scroll', onScroll, {passive:true});
+    onScroll();
+  }
 
 })();
 </script>
